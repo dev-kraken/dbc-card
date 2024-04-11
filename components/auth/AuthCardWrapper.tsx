@@ -21,6 +21,7 @@ interface AuthCardWrapperProps {
   backButtonTitle: string;
   onBackButtonClick: string;
   showSocialLogin?: boolean;
+  isPending?: boolean;
 }
 
 const AuthCardWrapper = ({
@@ -31,6 +32,7 @@ const AuthCardWrapper = ({
   backButtonTitle,
   onBackButtonClick,
   showSocialLogin,
+  isPending,
 }: AuthCardWrapperProps) => {
   return (
     <Card className="w-[450px] shadow-lg shadow-slate-800/40 border-0 border-slate-800/35 relative z-10 items-center overflow-hidden p-[2px]">
@@ -39,7 +41,7 @@ const AuthCardWrapper = ({
         <AuthCardHeader label={label} title={headerLabel} />
       </CardHeader>
       <CardContent className="space-y-4 relative z-10 bg-white">
-        {showSocialLogin && <AuthCardSocial />}
+        {showSocialLogin && <AuthCardSocial isPending={isPending} />}
         {children}
       </CardContent>
       <CardFooter className='relative z-10 bg-white rounded-b-md'>

@@ -4,6 +4,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
+import { Loader2 } from "lucide-react"
 
 import {
   Form,
@@ -201,6 +202,7 @@ const SignUpForm = () => {
           <AuthFormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
             {!isPending && "Create an account"}
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           </Button>
         </form>
       </Form>

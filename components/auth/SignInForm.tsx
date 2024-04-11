@@ -5,6 +5,8 @@ import Link from "next/link";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react"
 
 import {
   Form,
@@ -25,7 +27,7 @@ import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 
 import { Login } from "@/action/AuthAction";
 import AuthFormError from "@/components/auth/AuthFormError";
-import { useRouter } from "next/navigation";
+
 
 const SignInForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -65,6 +67,7 @@ const SignInForm = () => {
       backButtonTitle="Sign Up"
       onBackButtonClick="/sign-up"
       showSocialLogin
+      isPending={isPending}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -157,6 +160,7 @@ const SignInForm = () => {
           <AuthFormError message={error} />
           <Button disabled={isPending} type="submit" className="w-full">
             {!isPending && "Sign In"}
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           </Button>
         </form>
       </Form>
