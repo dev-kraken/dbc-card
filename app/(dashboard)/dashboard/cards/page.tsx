@@ -4,15 +4,13 @@ import {
   PageLayoutContent,
   PageLayoutHeader,
 } from "@/components/ui/page-layout";
-import { Button } from "@/components/ui/button";
+import AddNewCard from "@/app/(dashboard)/dashboard/_components/AddNewCard";
 
 const Cards = () => {
   return (
     <PageLayout>
       <PageLayoutHeader title="Cards">
-        <Button variant="default">
-          <p className="font-semibold max-lg:hidden">Cards</p>
-        </Button>
+        <AddNewCard />
       </PageLayoutHeader>
       <PageLayoutContent>
         <p>Cards</p>
