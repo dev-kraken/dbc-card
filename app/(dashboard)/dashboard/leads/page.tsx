@@ -1,10 +1,21 @@
 import React from "react";
-import PageLayout from "@/components/ui/page-layout";
+import {
+  PageLayout, PageLayoutContent,
+  PageLayoutHeader,
+} from "@/components/ui/page-layout";
+import { Button } from "@/components/ui/button";
 
 const Leads = () => {
   return (
-    <PageLayout title="All Leads">
-      <h3>All Leads</h3>
+    <PageLayout>
+      <PageLayoutHeader title="Leads">
+        <Button variant="default">
+          <p className="font-semibold max-lg:hidden">bUTTON</p>
+        </Button>
+      </PageLayoutHeader>
+      <PageLayoutContent>
+        <p>Leads</p>
+      </PageLayoutContent>
     </PageLayout>
   );
 };
