@@ -13,7 +13,7 @@ export const homeSidebarLinks = [
   },
   {
     label: "Leads",
-    route: "/leads",
+    route: "/dashboard/leads",
     icons: FilePieChart,
   },
 ];

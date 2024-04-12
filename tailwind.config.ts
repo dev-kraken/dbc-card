@@ -25,15 +25,19 @@ const config = {
       },
     },
     extend: {
-      fontFamily: {
-        poppins: ["var(--font-poppins)"],
-      },
       colors: {
         dark: {
-          1: "#1C1F2E",
-          2: "#161925",
-          3: "#252A41",
-          4: "#1E2757",
+          1: "#262626",
+          2: "#595959",
+          3: "#8C8C8C",
+          4: "#D9D9D9",
+          5: "#EEEFF4",
+        },
+        purple: {
+          1: "#722ED1",
+          2: "#6E3DD9",
+          3: "#7648D9",
+          4: "#D3ADF7",
         },
         blue: {
           1: "#0E78F9",

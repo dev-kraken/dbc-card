@@ -18,7 +18,7 @@ const MobileNav = () => {
   const pathname = usePathname();
 
   return (
-    <section className="w-full max-w-[200px]">
+    <section className="w-full max-w-[200px] sm:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Menu className="cursor-pointer size-8 text-slate-800 sm:hidden" />
@@ -41,7 +41,7 @@ const MobileNav = () => {
                         className={cn(
                           "flex gap-4 items-center p-3 rounded-lg w-full max-w-60",
                           {
-                            "bg-green-1": isActive,
+                            "bg-purple-1": isActive,
                           },
                         )}
                       >

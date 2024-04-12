@@ -9,8 +9,8 @@ import AuthSignOut from "@/app/(auth)/_components/AuthSignOut";
 const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <section className="sticky left-0 top-0 flex h-screen w-fit flex-col justify-between bg-gray-200/35 border-r p-3 pt-20 text-white max-sm:hidden lg:w-[200px]">
-      <div className="flex flex-1 flex-col gap-2">
+    <section className="sticky left-0 top-0 flex h-screen w-fit flex-col justify-between bg-dark-5 shadow-inner border-r pt-20 text-white max-sm:hidden lg:w-[200px]">
+      <div className="flex flex-1 flex-col gap-3 pl-3">
         {homeSidebarLinks.map((item) => {
           const isActive =
             pathname === item.route || pathname.startsWith(`dashboard/`);
@@ -19,9 +19,9 @@ const Sidebar = () => {
               href={item.route}
               key={item.label}
               className={cn(
-                "flex gap-4 items-center p-3 rounded-lg justify-start text-slate-800 hover:bg-green-1 hover:text-white",
+                "flex gap-3 items-center p-2 justify-start text-dark-1 hover:text-purple-1 hover:border-r-4 hover:border-purple-1",
                 {
-                  "bg-green-1 text-white": isActive,
+                  "text-purple-1 border-r-4 border-purple-1": isActive,
                 },
               )}
             >
@@ -33,7 +33,9 @@ const Sidebar = () => {
           );
         })}
       </div>
-      <AuthSignOut />
+      <div className="p-3">
+        <AuthSignOut />
+      </div>
     </section>
   );
 };

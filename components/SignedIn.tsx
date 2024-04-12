@@ -21,8 +21,13 @@ const SignedIn = ({ signedInUser }: SignedInProps) => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="size-10">
-            <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-            <AvatarFallback className="bg-green-2">SC</AvatarFallback>
+            <AvatarImage
+              src={signedInUser?.user_metadata?.avatar_url}
+              alt="@shadcn"
+            />
+            <AvatarFallback className="bg-purple-3 text-white text-lg">
+              {`${signedInUser?.user_metadata?.first_name.slice(0, 1)}${signedInUser?.user_metadata?.last_name.slice(0, 1)}`}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

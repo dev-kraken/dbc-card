@@ -1,12 +1,12 @@
 import React from "react";
 import PageLayout from "@/components/ui/page-layout";
 
-const Dashboard = () => {
+const Leads = () => {
   return (
-    <PageLayout title="Dashboard">
-      <h3>Dashboard</h3>
+    <PageLayout title="All Leads">
+      <h3>All Leads</h3>
     </PageLayout>
   );
 };
 
-export default Dashboard;
+export default Leads;

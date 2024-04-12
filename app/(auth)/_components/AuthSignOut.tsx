@@ -14,7 +14,7 @@ const AuthSignOut = () => {
     });
   };
   return (
-    <Button onClick={signOut} variant="default" className="gap-2 w-full p-3">
+    <Button onClick={signOut} variant="default" className="gap-2 w-full p-3 bg-purple-1 hover:bg-purple-3">
       <LiaSignOutAltSolid className="size-5" />
       <p className="font-semibold max-lg:hidden">Sign Out</p>
     </Button>
