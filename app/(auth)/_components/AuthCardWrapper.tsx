@@ -9,9 +9,9 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 
-import AuthCardSocial from '@/components/auth/AuthCardSocial';
-import AuthCardHeader from '@/components/auth/AuthCardHeader';
-import AuthCardFooter from '@/components/auth/AuthCardFooter';
+import AuthCardSocial from '@/app/(auth)/_components/AuthCardSocial';
+import AuthCardHeader from '@/app/(auth)/_components/AuthCardHeader';
+import AuthCardFooter from '@/app/(auth)/_components/AuthCardFooter';
 
 interface AuthCardWrapperProps {
   children: React.ReactNode;

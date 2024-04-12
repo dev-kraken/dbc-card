@@ -5,8 +5,7 @@ import Link from "next/link";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
 
 import {
   Form,
@@ -20,20 +19,18 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import AuthCardWrapper from "@/components/auth/AuthCardWrapper";
+import AuthCardWrapper from "@/app/(auth)/_components/AuthCardWrapper";
 
 import { SignIn } from "@/zod/AuthSchema";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 
 import { Login } from "@/action/AuthAction";
-import AuthFormError from "@/components/auth/AuthFormError";
-
+import AuthFormError from "@/app/(auth)/_components/AuthFormError";
 
 const SignInForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   const showPasswordHandler = () => {
     setShowPassword(!showPassword);
@@ -53,9 +50,6 @@ const SignInForm = () => {
     startTransition(() => {
       Login(values).then((data) => {
         setError(data?.error);
-        if (data?.success) {
-          router.push("/");
-        }
       });
     });
   };

@@ -2,19 +2,21 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "@/action/AuthAction";
+import { LogOutUser } from "@/action/AuthAction";
 import { useRouter } from "next/navigation";
+import { LiaSignOutAltSolid } from "react-icons/lia";
 
 const AuthSignOut = () => {
   const router = useRouter();
   const signOut = () => {
-    LogOut().finally(() => {
+    LogOutUser().then(() => {
       router.push("/sign-in");
     });
   };
   return (
-    <Button onClick={signOut} variant="default">
-      Sign Out
+    <Button onClick={signOut} variant="default" className="gap-2 w-full p-3">
+      <LiaSignOutAltSolid className="size-5" />
+      <p className="font-semibold max-lg:hidden">Sign Out</p>
     </Button>
   );
 };

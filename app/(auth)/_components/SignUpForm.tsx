@@ -4,7 +4,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
 
 import {
   Form,
@@ -17,11 +17,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { SignUp } from "@/zod/AuthSchema";
-import AuthCardWrapper from "@/components/auth/AuthCardWrapper";
+import AuthCardWrapper from "@/app/(auth)/_components/AuthCardWrapper";
 import { Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import AuthFormError from "@/components/auth/AuthFormError";
-import AuthFormSuccess from "@/components/auth/AuthFormSuccess";
+import AuthFormError from "@/app/(auth)/_components/AuthFormError";
+import AuthFormSuccess from "@/app/(auth)/_components/AuthFormSuccess";
 import { Register } from "@/action/AuthAction";
 
 const SignUpForm = () => {
@@ -50,7 +50,7 @@ const SignUpForm = () => {
     startTransition(async () => {
       Register(values).then((data) => {
         setError(data?.error);
-        setSuccess("Account created successfully !");
+        setSuccess(data?.success);
       });
     });
   };
