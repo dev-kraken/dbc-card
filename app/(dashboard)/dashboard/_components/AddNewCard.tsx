@@ -8,10 +8,13 @@ const AddNewCard = () => {
   const [modalState, setModalState] = useState<"addNewCard" | undefined>(
     undefined,
   );
-  const createCard = () => {};
   return (
     <>
-      <Button variant="outline" className="border-purple-1 text-purple-1 gap-1 flex items-center justify-center hover:bg-purple-1 hover:text-white" onClick={() => setModalState("addNewCard")}>
+      <Button
+        variant="outline"
+        className="border-purple-1 text-purple-1 gap-1 flex items-center justify-center hover:bg-purple-1 hover:text-white"
+        onClick={() => setModalState("addNewCard")}
+      >
         <CirclePlus className="size-4" />
         Add new card
       </Button>
@@ -20,7 +23,6 @@ const AddNewCard = () => {
         onClose={() => setModalState(undefined)}
         title="Add New Card"
         buttonText="Add New Card"
-        handelClick={createCard}
       />
     </>
   );

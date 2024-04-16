@@ -1,5 +1,5 @@
 "use client";
-import React, { useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import * as z from "zod";
 import {
   Dialog,
@@ -24,28 +24,29 @@ import { Button } from "../ui/button";
 import { IoAddOutline } from "react-icons/io5";
 import { DBCardSchema } from "@/zod/CardSchema";
 import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
+import CardAvatarCrop from "@/components/modals/CardAvatarCrop";
+import Image from "next/image";
+import { Trash } from "lucide-react";
 
 interface CardModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   buttonText: string;
-  handelClick: () => void;
 }
 
-const CardModal = ({
-  isOpen,
-  onClose,
-  title,
-  buttonText,
-  handelClick,
-}: CardModalProps) => {
+const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   const [isPending, startTransition] = useTransition();
+  const [modalState, setModalState] = useState<"cropAvatar" | undefined>(
+    undefined,
+  );
+  const [imgSrc, setImgSrc] = useState("");
+  const [imgFile, setImgFile] = useState<File | undefined>(undefined);
   const form = useForm({
     resolver: zodResolver(DBCardSchema),
     defaultValues: {
       name: "",
-      cardProfile: "",
+      cardProfile: new File([], "") || undefined,
     },
   });
 
@@ -55,22 +56,50 @@ const CardModal = ({
     });
   };
 
+  useEffect(() => {
+    if (!imgFile) {
+      form.setError("cardProfile", { message: "Card profile is required" });
+      setImgSrc("");
+      setModalState(undefined);
+      setImgFile(undefined);
+      return;
+    }
+    if (imgFile) {
+      form.setValue("cardProfile", imgFile);
+      form.clearErrors("cardProfile");
+      setImgSrc(URL.createObjectURL(imgFile));
+    }
+  }, [form, imgFile]);
+
   const onDrop = (acceptedFiles: File[]) => {
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onabort = () => console.log("file reading was aborted");
-      reader.onerror = () => {
-        console.log("file reading has failed");
-      };
-      reader.onload = () => {
-        form.setValue("cardProfile", [file] as unknown as string);
-      };
-      reader.readAsDataURL(file);
-    });
+    const file = acceptedFiles[0];
+    if (!file && acceptedFiles.length === 0)
+      form.setError("cardProfile", { message: "required" });
+
+    const reader = new FileReader();
+    reader.onabort = () => console.log("file reading was aborted");
+    reader.onerror = () => {
+      setModalState(undefined);
+      console.log("file reading has failed");
+    };
+    reader.onload = () => {
+      setImgSrc(reader.result?.toString() || "");
+      setModalState("cropAvatar");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handelDelete = () => {
+    setImgSrc("");
+    setImgFile(undefined);
+    form.setValue("cardProfile", new File([], ""));
   };
 
   const handelClose = () => {
     form.reset();
+    setModalState(undefined);
+    setImgFile(undefined);
+    setImgSrc("");
     onClose();
   };
   return (
@@ -88,26 +117,45 @@ const CardModal = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="cardProfile"
-                render={({ field: { onChange, value, ...rest } }) => (
-                  <FormItem>
-                    <FormControl>
-                      <>
-                        {<AvatarDropzone onDrop={onDrop} />}
-                        <Input
-                          disabled={isPending}
-                          type="file"
-                          className="hidden"
-                          {...rest}
-                        />
-                      </>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {imgFile && imgSrc ? (
+                <div className="relative group w-[150px] h-auto group mx-auto">
+                  <Image
+                    src={imgSrc}
+                    alt={imgFile.name}
+                    width={0}
+                    height={0}
+                    style={{ width: "150px", height: "auto" }}
+                    className="rounded-full mx-auto border-2 border-purple-4 relative w-[150px] h-auto"
+                  />
+                  <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/50 rounded-full w-[150px] h-auto opacity-0 group-hover:opacity-100 transition-opacity delay-100 duration-300">
+                    <Trash
+                      className="size-10 text-destructive cursor-pointer hover:animate-ping p-2 rounded-full bg-dark-1"
+                      onClick={handelDelete}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <FormField
+                  control={form.control}
+                  name="cardProfile"
+                  render={({ field: { onChange, value, ...rest } }) => (
+                    <FormItem>
+                      <FormControl>
+                        <>
+                          <AvatarDropzone onDrop={onDrop} />
+                          <Input
+                            disabled={isPending}
+                            type="file"
+                            className="hidden"
+                            {...rest}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="name"
@@ -143,6 +191,12 @@ const CardModal = ({
             </DialogFooter>
           </form>
         </Form>
+        <CardAvatarCrop
+          isOpen={modalState === "cropAvatar"}
+          onClose={() => setModalState(undefined)}
+          imgSrc={imgSrc}
+          setImgFile={setImgFile}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -48,7 +48,7 @@ export const AvatarDropzone = ({ onDrop }: OnDropProps) => {
             : "bg-purple-300/10 text-purple-400",
         )}
       >
-        <input {...getInputProps()} />
+        <input type="file" {...getInputProps()} />
         {!isDragActive && (
           <div className="space-y-3 w-full text-center">
             <IoIosCloudUpload
