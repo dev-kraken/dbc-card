@@ -5,8 +5,11 @@ import {
   PageLayoutHeader,
 } from "@/components/ui/page-layout";
 import AddNewCard from "@/app/(dashboard)/dashboard/_components/AddNewCard";
+import { AllCards } from "@/action/CardCURD";
+import AllCardsList from "@/app/(dashboard)/dashboard/cards/_components/AllCardsList";
 
-const Cards = () => {
+const Cards = async () => {
+  const allCards = await AllCards();
   return (
     <PageLayout>
       <PageLayoutHeader title="Cards">
@@ -15,6 +18,7 @@ const Cards = () => {
       <PageLayoutContent>
         <p>Cards</p>
       </PageLayoutContent>
+      <AllCardsList allCards={allCards ?? []} />
     </PageLayout>
   );
 };

@@ -26,7 +26,10 @@ import { DBCardSchema } from "@/zod/CardSchema";
 import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
 import CardAvatarCrop from "@/components/modals/CardAvatarCrop";
 import Image from "next/image";
-import { Trash } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
+import { AddCard } from "@/action/CardCURD";
+import ModalFormError from "@/components/modals/ModalFormError";
+import { useToast } from "@/components/ui/use-toast";
 
 interface CardModalProps {
   isOpen: boolean;
@@ -37,36 +40,57 @@ interface CardModalProps {
 
 const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>(undefined);
   const [modalState, setModalState] = useState<"cropAvatar" | undefined>(
     undefined,
   );
   const [imgSrc, setImgSrc] = useState("");
   const [imgFile, setImgFile] = useState<File | undefined>(undefined);
+  const { toast } = useToast();
   const form = useForm({
     resolver: zodResolver(DBCardSchema),
     defaultValues: {
-      name: "",
-      cardProfile: new File([], "") || undefined,
+      cardName: "",
+      cardAvatarImg: new File([], ""),
     },
   });
 
   const onSubmit = async (values: z.infer<typeof DBCardSchema>) => {
+    setError(undefined);
+    const cardValues = new FormData();
+    cardValues.append("cardName", values.cardName);
+    cardValues.append("cardAvatarImg", values.cardAvatarImg as File);
     startTransition(async () => {
-      console.log(values);
+      try {
+        await AddCard(cardValues).then((res) => {
+          setError(res?.error);
+          if (res?.success) {
+            toast({
+              variant: "default",
+              className:
+                "emerald-500 group border-emerald-500 bg-emerald-500/15 text-emerald-500",
+              duration: 3000,
+              title: res?.success || "Card added successfully!",
+            });
+            handelClose();
+          }
+        });
+      } catch (error) {
+        setError(error as string);
+      }
     });
   };
 
   useEffect(() => {
     if (!imgFile) {
-      form.setError("cardProfile", { message: "Card profile is required" });
       setImgSrc("");
       setModalState(undefined);
       setImgFile(undefined);
       return;
     }
     if (imgFile) {
-      form.setValue("cardProfile", imgFile);
-      form.clearErrors("cardProfile");
+      form.setValue("cardAvatarImg", imgFile);
+      form.clearErrors("cardAvatarImg");
       setImgSrc(URL.createObjectURL(imgFile));
     }
   }, [form, imgFile]);
@@ -74,7 +98,7 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file && acceptedFiles.length === 0)
-      form.setError("cardProfile", { message: "required" });
+      form.setError("cardAvatarImg", { message: "required" });
 
     const reader = new FileReader();
     reader.onabort = () => console.log("file reading was aborted");
@@ -90,13 +114,15 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   };
 
   const handelDelete = () => {
+    setError(undefined);
     setImgSrc("");
     setImgFile(undefined);
-    form.setValue("cardProfile", new File([], ""));
+    form.setValue("cardAvatarImg", new File([], ""));
   };
 
   const handelClose = () => {
     form.reset();
+    setError(undefined);
     setModalState(undefined);
     setImgFile(undefined);
     setImgSrc("");
@@ -137,7 +163,7 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
               ) : (
                 <FormField
                   control={form.control}
-                  name="cardProfile"
+                  name="cardAvatarImg"
                   render={({ field: { onChange, value, ...rest } }) => (
                     <FormItem>
                       <FormControl>
@@ -158,7 +184,7 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
               )}
               <FormField
                 control={form.control}
-                name="name"
+                name="cardName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
@@ -177,16 +203,18 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
                 )}
               />
             </div>
+            <ModalFormError message={error} />
             <DialogFooter>
               <Button
                 disabled={isPending}
                 type="submit"
                 variant="default"
-                className="flex items-center gap-1 bg-purple-1 hover:bg-purple-2"
+                className="flex items-center gap-1 bg-purple-1 hover:bg-purple-2 w-36"
                 size="sm"
               >
                 {!isPending && <IoAddOutline size={18} />}
                 {!isPending && <span>{buttonText}</span>}
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               </Button>
             </DialogFooter>
           </form>

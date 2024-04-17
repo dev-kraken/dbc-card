@@ -1,10 +1,10 @@
 import { BadgeCheck } from "lucide-react";
 
-interface AuthFormSuccessProps {
+interface ModalSuccessProps {
   message?: string;
 }
 
-const AuthFormSuccess = ({ message }: AuthFormSuccessProps) => {
+const ModalFormSuccess = ({ message }: ModalSuccessProps) => {
   if (!message) return null;
   return (
     <div
@@ -17,4 +17,4 @@ const AuthFormSuccess = ({ message }: AuthFormSuccessProps) => {
   );
 };
 
-export default AuthFormSuccess;
+export default ModalFormSuccess;

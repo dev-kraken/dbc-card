@@ -10,14 +10,13 @@ enum ImageFormat {
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_TYPES = [ImageFormat.PNG];
 export const DBCardSchema = z.object({
-  name: z.string().min(1, {
+  cardName: z.string().min(1, {
     message: "Card name is required.",
   }),
-  cardProfile: z
+  cardAvatarImg: z
     .instanceof(File, {
       message: "Card profile is required.",
     })
-    .optional()
     .refine((file) => {
       return file && file.size > 0;
     }, "Card profile is required.")
