@@ -66,14 +66,6 @@ export const Register = async (values: z.infer<typeof SignUp>) => {
   }
 };
 
-export const LogOutUser = async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.log(error);
-  }
-  revalidatePath("/sign-in");
-};
-
 export const SignedInUser = async () => {
   const { data, error } = await supabase.auth.getUser();
   if (error) {

@@ -7,10 +7,6 @@ enum ImageFormat {
   // WEBP = "image/webp",
 }
 
-enum errorMessage {
-  ImageError = "Card profile is required.",
-}
-
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_TYPES = [ImageFormat.PNG];
 export const DBCardSchema = z.object({
@@ -19,7 +15,7 @@ export const DBCardSchema = z.object({
   }),
   cardProfile: z
     .instanceof(File, {
-      message: errorMessage.ImageError as string,
+      message: "Card profile is required.",
     })
     .optional()
     .refine((file) => {
