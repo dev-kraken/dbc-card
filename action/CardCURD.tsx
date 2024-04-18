@@ -5,8 +5,8 @@ import { DBCardSchema } from "@/zod/CardSchema";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
-const supabase = createClient();
 export const AddCard = async (data: FormData) => {
+  const supabase = createClient();
   const values = {
     cardName: data.get("cardName"),
     cardAvatarImg: data.get("cardAvatarImg"),
@@ -51,6 +51,7 @@ export const AddCard = async (data: FormData) => {
 };
 
 export const AllCards = async () => {
+  const supabase = createClient();
   try {
     let { data: cards, error } = await supabase
       .from("cards")

@@ -8,8 +8,8 @@ import { DefaultLoginRedirect } from "@/routes";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-const supabase = createClient();
 export const Login = async (values: z.infer<typeof SignIn>) => {
+  const supabase = createClient();
   const validatedFields = SignIn.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -35,6 +35,7 @@ export const Login = async (values: z.infer<typeof SignIn>) => {
 };
 
 export const Register = async (values: z.infer<typeof SignUp>) => {
+  const supabase = createClient();
   const validatedFields = SignUp.safeParse(values);
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
@@ -67,6 +68,7 @@ export const Register = async (values: z.infer<typeof SignUp>) => {
 };
 
 export const SignedInUser = async () => {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error) {
     console.log(error);
