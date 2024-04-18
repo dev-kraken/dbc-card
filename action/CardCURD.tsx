@@ -50,13 +50,31 @@ export const AddCard = async (data: FormData) => {
   }
 };
 
+export const DeleteCard = async (cardId: string) => {
+  const supabase = createClient();
+  try {
+    const { data: cardData, error: cardError } = await supabase
+      .from("cards")
+      .update({ isDeleted: true })
+      .eq("cardId", cardId);
+    if (cardError) {
+      return { error: cardError.message };
+    }
+    revalidatePath("/dashboard/cards/");
+    return { success: "Card deleted successfully!" };
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+};
+
 export const AllCards = async () => {
   const supabase = createClient();
   try {
     let { data: cards, error } = await supabase
       .from("cards")
       .select("*")
-      .order("id", { ascending: false });
+      .order("id", { ascending: false })
+      .eq("isDeleted", false);
     if (error) {
       console.log(error);
     }

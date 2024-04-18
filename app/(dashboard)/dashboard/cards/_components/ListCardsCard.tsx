@@ -69,7 +69,10 @@ const ListCardsCard = ({ card }: CardProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
-                  <DeleteCardButton cardName={card.cardName} />
+                  <DeleteCardButton
+                    cardName={card.cardName}
+                    cardId={card.cardId ?? ""}
+                  />
                   <span className="sr-only">Delete Card</span>
                 </div>
               </TooltipTrigger>

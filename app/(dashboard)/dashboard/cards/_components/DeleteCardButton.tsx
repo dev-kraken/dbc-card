@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { DeleteCard } from "@/action/CardCURD";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   deleteCard: z
@@ -32,7 +35,14 @@ const formSchema = z.object({
     }),
 });
 
-const DeleteCardButton = ({ cardName }: { cardName: string }) => {
+interface DeleteCardButtonProps {
+  cardName: string;
+  cardId: string;
+}
+
+const DeleteCardButton = ({ cardName, cardId }: DeleteCardButtonProps) => {
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,11 +51,29 @@ const DeleteCardButton = ({ cardName }: { cardName: string }) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    try {
+      if (values.deleteCard === "delete") {
+        DeleteCard(cardId).then((res) => {
+          if (res?.error) {
+            throw new Error(res?.error);
+          }
+          toast({
+            title: "Card Deleted",
+            description: `Card ${cardName} deleted successfully`,
+            variant: "destructive",
+            duration: 3000,
+          });
+          form.reset();
+          setPopoverOpen(false);
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
-    <Popover>
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon">
           <Trash2 className="size-4 text-destructive" />
