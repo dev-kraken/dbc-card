@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DeleteCardButton from "@/app/(dashboard)/dashboard/cards/_components/DeleteCardButton";
 import Link from "next/link";
+import AddUpdateCardModal from "@/app/(dashboard)/dashboard/cards/_components/AddUpdateCardModal";
 
 interface CardProps {
   card: AllCardsListT;
@@ -38,10 +39,18 @@ const ListCardsCard = ({ card }: CardProps) => {
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Pencil className="size-4" />
+                <div>
+                  <AddUpdateCardModal
+                    variant="ghost"
+                    size="icon"
+                    mode="update"
+                    cardData={card}
+                  >
+                    <Pencil className="size-4" />
+                    <span className="sr-only">Rename Card</span>
+                  </AddUpdateCardModal>
                   <span className="sr-only">Rename Card</span>
-                </Button>
+                </div>
               </TooltipTrigger>
               <TooltipContent>Rename Card</TooltipContent>
             </Tooltip>

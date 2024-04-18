@@ -1,11 +1,12 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
 import { createClient } from "@/utils/supabase/server";
 import { DBCardSchema } from "@/zod/CardSchema";
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
 
-export const AddCard = async (data: FormData) => {
+const AddCard = async (data: FormData) => {
   const supabase = createClient();
   const values = {
     cardName: data.get("cardName"),
@@ -47,6 +48,24 @@ export const AddCard = async (data: FormData) => {
     return { success: "Card added successfully!" };
   } catch (error) {
     return { error: "Something went wrong!" };
+  }
+};
+
+const UpdateCard = async (data: FormData) => {
+  const supabase = createClient();
+  try {
+    return { success: "Card updated successfully!" };
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+};
+export const AddUpdateCard = async (data: FormData, mode: string) => {
+  if (mode === "add") {
+    return AddCard(data);
+  }
+
+  if (mode === "update") {
+    return UpdateCard(data);
   }
 };
 

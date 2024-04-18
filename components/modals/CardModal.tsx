@@ -27,18 +27,33 @@ import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
 import CardAvatarCrop from "@/components/modals/CardAvatarCrop";
 import Image from "next/image";
 import { Loader2, Trash } from "lucide-react";
-import { AddCard } from "@/action/CardCURD";
+import { AddUpdateCard } from "@/action/CardCURD";
 import ModalFormError from "@/components/modals/ModalFormError";
 import { useToast } from "@/components/ui/use-toast";
+
+const UrlToFile = async (url: string, name: string) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], name, { type: "image/png" });
+};
 
 interface CardModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   buttonText: string;
+  cardData?: AllCardsListT;
+  mode: string;
 }
 
-const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
+const CardModal = ({
+  isOpen,
+  onClose,
+  title,
+  buttonText,
+  cardData,
+  mode,
+}: CardModalProps) => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>(undefined);
   const [modalState, setModalState] = useState<"cropAvatar" | undefined>(
@@ -50,8 +65,8 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   const form = useForm({
     resolver: zodResolver(DBCardSchema),
     defaultValues: {
-      cardName: "",
-      cardAvatarImg: new File([], ""),
+      cardName: cardData?.cardName || "",
+      cardAvatarImg: imgFile || new File([], ""),
     },
   });
 
@@ -62,7 +77,7 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
     cardValues.append("cardAvatarImg", values.cardAvatarImg as File);
     startTransition(async () => {
       try {
-        await AddCard(cardValues).then((res) => {
+        await AddUpdateCard(cardValues, mode).then((res) => {
           setError(res?.error);
           if (res?.success) {
             toast({
@@ -82,6 +97,27 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   };
 
   useEffect(() => {
+    const fetchImageFile = async () => {
+      if (isOpen && cardData) {
+        try {
+          const file = await UrlToFile(
+            `http://127.0.0.1:54321/storage/v1/object/public/AvatarCards/${cardData.avatarUrl}`,
+            cardData.cardName,
+          );
+          setImgFile(file);
+          setImgSrc(
+            `http://127.0.0.1:54321/storage/v1/object/public/AvatarCards/${cardData.avatarUrl}`,
+          );
+        } catch (error) {
+          console.error("Error fetching image file:", error);
+        }
+      }
+    };
+
+    fetchImageFile().finally();
+  }, [cardData, isOpen]);
+
+  useEffect(() => {
     if (!imgFile) {
       setImgSrc("");
       setModalState(undefined);
@@ -93,8 +129,9 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
       form.clearErrors("cardAvatarImg");
       setImgSrc(URL.createObjectURL(imgFile));
     }
-  }, [form, imgFile]);
+  }, [cardData, form, imgFile]);
 
+  console.log();
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file && acceptedFiles.length === 0)
@@ -130,7 +167,7 @@ const CardModal = ({ isOpen, onClose, title, buttonText }: CardModalProps) => {
   };
   return (
     <Dialog open={isOpen} onOpenChange={handelClose}>
-      <DialogContent className="flex w-full max-w-[520px] flex-col gap-6 border-none px-6 py-9">
+      <DialogContent className="flex w-full max-w-[450px] flex-col gap-6 border-none px-6 py-9">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">
             {title}

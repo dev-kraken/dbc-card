@@ -10,7 +10,6 @@ const Sidebar = () => {
   const pathname = usePathname();
   const params = useParams();
   let cardIdSlug = params?.cardId as string;
-    console.log(cardIdSlug)
   return (
     <section className="sticky left-0 top-0 flex h-screen w-fit flex-col justify-between bg-dark-5 shadow-inner border-r pt-20 text-white max-sm:hidden lg:w-[200px]">
       <div className="flex flex-1 flex-col gap-3 pl-3">
