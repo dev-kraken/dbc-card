@@ -6,8 +6,13 @@ import { z } from "zod";
 import { createClient } from "@/utils/supabase/server";
 import { DBCardSchema } from "@/zod/CardSchema";
 
-const AddCard = async (data: FormData) => {
+export const AddUpdateCard = async (
+  data: FormData,
+  mode: string,
+  id: number,
+) => {
   const supabase = createClient();
+  const authId = await supabase.auth.getUser().then((res) => res.data.user?.id);
   const values = {
     cardName: data.get("cardName"),
     cardAvatarImg: data.get("cardAvatarImg"),
@@ -24,8 +29,9 @@ const AddCard = async (data: FormData) => {
     // Upload image
     const { data: ImgData, error: ImgError } = await supabase.storage
       .from("AvatarCards")
-      .upload(cardAvatarImg.name, cardAvatarImg, {
+      .upload(`${authId as string}/${cardAvatarImg.name}`, cardAvatarImg, {
         contentType: "image/png",
+        upsert: true,
       });
 
     if (ImgError) {
@@ -35,37 +41,26 @@ const AddCard = async (data: FormData) => {
     // Add card
     const { data: cardData, error: cardError } = await supabase
       .from("cards")
-      .insert({
+      .upsert({
+        id: id,
         cardName: cardName,
         avatarUrl: cardAvatarImg.name,
-      });
+      })
+      .select();
 
     if (cardError) {
       return { error: cardError.message };
     }
 
     revalidatePath("/dashboard/cards/");
-    return { success: "Card added successfully!" };
+    return {
+      success:
+        mode === "update"
+          ? "Card updated successfully!"
+          : "Card added successfully!",
+    };
   } catch (error) {
     return { error: "Something went wrong!" };
-  }
-};
-
-const UpdateCard = async (data: FormData) => {
-  const supabase = createClient();
-  try {
-    return { success: "Card updated successfully!" };
-  } catch (error) {
-    return { error: "Something went wrong!" };
-  }
-};
-export const AddUpdateCard = async (data: FormData, mode: string) => {
-  if (mode === "add") {
-    return AddCard(data);
-  }
-
-  if (mode === "update") {
-    return UpdateCard(data);
   }
 };
 
@@ -101,4 +96,12 @@ export const AllCards = async () => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getAvatarUrl = async (pathUrl: string) => {
+  const supabase = createClient();
+  const { data: cardAvatar } = supabase.storage
+    .from("AvatarCards")
+    .getPublicUrl(pathUrl);
+  return (cardAvatar?.publicUrl as string) ?? "";
 };

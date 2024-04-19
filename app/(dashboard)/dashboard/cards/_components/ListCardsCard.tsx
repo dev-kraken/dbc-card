@@ -26,12 +26,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DeleteCardButton from "@/app/(dashboard)/dashboard/cards/_components/DeleteCardButton";
 import Link from "next/link";
 import AddUpdateCardModal from "@/app/(dashboard)/dashboard/cards/_components/AddUpdateCardModal";
+import { createClient } from "@/utils/supabase/server";
+import { getAvatarUrl } from "@/action/CardCURD";
 
 interface CardProps {
   card: AllCardsListT;
 }
 
-const ListCardsCard = ({ card }: CardProps) => {
+const ListCardsCard = async ({ card }: CardProps) => {
   return (
     <Card className="w-full sm:w-full md:w-[25rem] border-purple-4/50">
       <CardHeader className="p-2 border-b flex">
@@ -104,10 +106,12 @@ const ListCardsCard = ({ card }: CardProps) => {
           </div>
         </TooltipProvider>
       </CardHeader>
-      <CardContent className="py-4 flex items-center justify-between">
+      <CardContent className="py-4 gap-2 flex items-center justify-between">
         <Avatar className="size-20">
           <AvatarImage
-            src={`http://127.0.0.1:54321/storage/v1/object/public/AvatarCards/${card.avatarUrl}`}
+            src={await getAvatarUrl(`${card.userId}/${card.avatarUrl}`).then(
+              (res) => res.toString(),
+            )}
             alt={card.cardName}
           />
           <AvatarFallback>
@@ -117,7 +121,7 @@ const ListCardsCard = ({ card }: CardProps) => {
               .join("")}
           </AvatarFallback>
         </Avatar>
-        <h3 className="text-2xl font-semibold">{card.cardName}</h3>
+        <h3 className="text-xl font-semibold truncate">{card.cardName}</h3>
       </CardContent>
       <CardFooter className="flex justify-between p-4 items-center">
         <Button

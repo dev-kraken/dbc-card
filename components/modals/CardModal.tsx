@@ -27,7 +27,7 @@ import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
 import CardAvatarCrop from "@/components/modals/CardAvatarCrop";
 import Image from "next/image";
 import { Loader2, Trash } from "lucide-react";
-import { AddUpdateCard } from "@/action/CardCURD";
+import { AddUpdateCard, getAvatarUrl } from "@/action/CardCURD";
 import ModalFormError from "@/components/modals/ModalFormError";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -65,8 +65,8 @@ const CardModal = ({
   const form = useForm({
     resolver: zodResolver(DBCardSchema),
     defaultValues: {
-      cardName: cardData?.cardName || "",
-      cardAvatarImg: imgFile || new File([], ""),
+      cardName: "",
+      cardAvatarImg: new File([], ""),
     },
   });
 
@@ -77,19 +77,24 @@ const CardModal = ({
     cardValues.append("cardAvatarImg", values.cardAvatarImg as File);
     startTransition(async () => {
       try {
-        await AddUpdateCard(cardValues, mode).then((res) => {
-          setError(res?.error);
-          if (res?.success) {
-            toast({
-              variant: "default",
-              className:
-                "emerald-500 group border-emerald-500 bg-emerald-500/15 text-emerald-500",
-              duration: 3000,
-              title: res?.success || "Card added successfully!",
-            });
-            handelClose();
-          }
-        });
+        await AddUpdateCard(cardValues, mode, cardData?.id as number).then(
+          (res) => {
+            setError(res?.error);
+            if (res?.success) {
+              toast({
+                variant: "default",
+                className:
+                  "emerald-500 group border-emerald-500 bg-emerald-500/15 text-emerald-500",
+                duration: 3000,
+                title:
+                  res?.success || mode === "update"
+                    ? "Card Updated successfully"
+                    : "Card added successfully!",
+              });
+              handelClose();
+            }
+          },
+        );
       } catch (error) {
         setError(error as string);
       }
@@ -99,15 +104,15 @@ const CardModal = ({
   useEffect(() => {
     const fetchImageFile = async () => {
       if (isOpen && cardData) {
+        form.setValue("cardName", cardData.cardName);
         try {
-          const file = await UrlToFile(
-            `http://127.0.0.1:54321/storage/v1/object/public/AvatarCards/${cardData.avatarUrl}`,
-            cardData.cardName,
+          const avatarUrl = await getAvatarUrl(
+            `${cardData.userId}/${cardData.avatarUrl}`,
           );
+          const file = await UrlToFile(`${avatarUrl}`, cardData.avatarUrl);
+          form.setValue("cardAvatarImg", file);
           setImgFile(file);
-          setImgSrc(
-            `http://127.0.0.1:54321/storage/v1/object/public/AvatarCards/${cardData.avatarUrl}`,
-          );
+          setImgSrc(avatarUrl);
         } catch (error) {
           console.error("Error fetching image file:", error);
         }
@@ -131,7 +136,6 @@ const CardModal = ({
     }
   }, [cardData, form, imgFile]);
 
-  console.log();
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file && acceptedFiles.length === 0)
@@ -230,9 +234,10 @@ const CardModal = ({
                     <FormControl>
                       <Input
                         disabled={isPending}
-                        className="border-purple-300 text-black focus-visible:border-purple-500 focus-visible:ring-purple-400/50"
+                        className="border-purple-300 text-black focus-visible:border-purple-500 focus-visible:ring-purple-400/50 "
                         placeholder="Enter card name"
                         {...field}
+                          maxLength={30}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
