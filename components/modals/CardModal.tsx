@@ -120,7 +120,7 @@ const CardModal = ({
     };
 
     fetchImageFile().finally();
-  }, [cardData, isOpen]);
+  }, [cardData, form, isOpen]);
 
   useEffect(() => {
     if (!imgFile) {

@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   SquareChevronLeft,
   TabletSmartphone,
+  VenetianMask,
 } from "lucide-react";
 
 export const homeSidebarLinks = [
@@ -35,6 +36,12 @@ export const homeSidebarLinks = [
     label: "Select Style",
     route: "/dashboard/cards/[cardId]/select-style",
     icon: FilePieChart,
+    menu: "card",
+  },
+  {
+    label: "Profile",
+    route: "/dashboard/cards/[cardId]/profile",
+    icon: VenetianMask,
     menu: "card",
   },
 ];
