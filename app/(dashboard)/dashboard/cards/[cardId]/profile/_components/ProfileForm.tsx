@@ -21,7 +21,6 @@ import Image from "next/image";
 import { Loader2, Trash } from "lucide-react";
 import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
 import { Input } from "@/components/ui/input";
-import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { IoAddOutline } from "react-icons/io5";
 import { useForm } from "react-hook-form";
@@ -30,33 +29,75 @@ import { DBCardProfileSchema } from "@/zod/CardSchema";
 import * as z from "zod";
 import CardAvatarCrop from "@/components/modals/CardAvatarCrop";
 import { Textarea } from "@/components/ui/textarea";
+import { AddUpdateCardProfile, getAvatarUrl } from "@/action/CardCURD";
 
-const ProfileForm = () => {
+const UrlToFile = async (url: string, name: string) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], name, { type: "image/png" });
+};
+
+interface CardProfileProps {
+  profileData: CardProfileT | null | undefined;
+  cardId: string;
+}
+
+const ProfileForm = ({ profileData, cardId }: CardProfileProps) => {
   const [modalState, setModalState] = useState<"cropAvatar" | undefined>(
     undefined,
   );
   const [isPending, startTransition] = useTransition();
   const [imgSrc, setImgSrc] = useState("");
   const [imgFile, setImgFile] = useState<File | undefined>(undefined);
-
+  let mode = !profileData ? "create" : "update";
   const form = useForm({
     resolver: zodResolver(DBCardProfileSchema),
     defaultValues: {
-      profileName: "",
+      cardId: cardId as string,
+      profileName: (profileData?.profileName as string) || "",
       cardProfileImg: new File([], ""),
-      licenseNumber: "",
-      subHeader: "",
-      bio: "",
+      licenseNumber: (profileData?.licenseNumber as string) || "",
+      subHeader: (profileData?.subHeader as string) || "",
+      bio: (profileData?.bio as string) || "",
     },
   });
   const onSubmit = async (values: z.infer<typeof DBCardProfileSchema>) => {
     const cardValues = new FormData();
     cardValues.append("profileName", values.profileName);
     cardValues.append("cardProfileImg", values.cardProfileImg as File);
+    cardValues.append("licenseNumber", values.licenseNumber);
+    cardValues.append("subHeader", values.subHeader);
+    cardValues.append("bio", values.bio);
+    cardValues.append("cardId", values.cardId);
     startTransition(async () => {
-      console.log(values);
+      AddUpdateCardProfile(cardValues, mode, profileData?.id).then((res) => {
+        if (res?.error) {
+          console.log(res.error);
+        }
+        if (res?.success) {
+          console.log(res.success);
+        }
+      });
     });
   };
+
+  useEffect(() => {
+    const fetchImageFile = async () => {
+      if (profileData && profileData.profileImg) {
+        try {
+          const avatarUrl = await getAvatarUrl(profileData.profileImg);
+          const file = await UrlToFile(`${avatarUrl}`, profileData.profileImg);
+          form.setValue("cardProfileImg", file);
+          setImgFile(file);
+          setImgSrc(avatarUrl);
+        } catch (error) {
+          console.error("Error fetching image file:", error);
+        }
+      }
+    };
+
+    fetchImageFile().finally();
+  }, [profileData, form]);
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -82,7 +123,7 @@ const ProfileForm = () => {
       setModalState(undefined);
       setImgFile(undefined);
       return;
-    }cardAvatarImg
+    }
     if (imgFile) {
       form.setValue("cardProfileImg", imgFile);
       form.clearErrors("cardProfileImg");
@@ -103,9 +144,9 @@ const ProfileForm = () => {
           Update your profile details.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <CardContent>
             <div className="space-y-2">
               {imgFile && imgSrc ? (
                 <div className="relative group w-[150px] h-auto group mx-auto">
@@ -221,28 +262,30 @@ const ProfileForm = () => {
                 )}
               />
             </div>
-            <DialogFooter>
-              <Button
-                disabled={isPending}
-                type="submit"
-                variant="default"
-                className="flex items-center gap-1 bg-purple-1 hover:bg-purple-2 w-36"
-                size="sm"
-              >
-                {!isPending && <IoAddOutline size={18} />}
-                {!isPending && <span>Save Profile</span>}
-                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-        <CardAvatarCrop
-          isOpen={modalState === "cropAvatar"}
-          onClose={() => setModalState(undefined)}
-          imgSrc={imgSrc}
-          setImgFile={setImgFile}
-        />
-      </CardContent>
+          </CardContent>
+          <CardFooter>
+            <Button
+              disabled={isPending}
+              type="submit"
+              variant="default"
+              className="flex items-center gap-1 bg-purple-1 hover:bg-purple-2 w-36"
+              size="sm"
+            >
+              {!isPending && <IoAddOutline size={18} />}
+              {!isPending && (
+                <span>{mode === "create" ? "Create" : "Update"} Card</span>
+              )}
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
+      <CardAvatarCrop
+        isOpen={modalState === "cropAvatar"}
+        onClose={() => setModalState(undefined)}
+        imgSrc={imgSrc}
+        setImgFile={setImgFile}
+      />
     </Card>
   );
 };

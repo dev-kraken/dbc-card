@@ -34,10 +34,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      cardProfile: {
+        Row: {
+          bio: string
+          cardId: string
+          created_at: string
+          id: number
+          isDeleted: boolean
+          licenseNumber: string
+          profileImg: string | null
+          profileName: string
+          subHeader: string | null
+        }
+        Insert: {
+          bio: string
+          cardId?: string
+          created_at?: string
+          id?: number
+          isDeleted?: boolean
+          licenseNumber: string
+          profileImg?: string | null
+          profileName: string
+          subHeader?: string | null
+        }
+        Update: {
+          bio?: string
+          cardId?: string
+          created_at?: string
+          id?: number
+          isDeleted?: boolean
+          licenseNumber?: string
+          profileImg?: string | null
+          profileName?: string
+          subHeader?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_cardProfile_cardId_fkey"
+            columns: ["cardId"]
+            isOneToOne: true
+            referencedRelation: "cards"
+            referencedColumns: ["cardId"]
+          },
+        ]
+      }
       cards: {
         Row: {
           avatarUrl: string
-          cardId: string | null
+          cardId: string
           cardName: string
           createdAt: string
           id: number
@@ -46,7 +90,7 @@ export type Database = {
         }
         Insert: {
           avatarUrl: string
-          cardId?: string | null
+          cardId?: string
           cardName: string
           createdAt?: string
           id?: number
@@ -55,7 +99,7 @@ export type Database = {
         }
         Update: {
           avatarUrl?: string
-          cardId?: string | null
+          cardId?: string
           cardName?: string
           createdAt?: string
           id?: number

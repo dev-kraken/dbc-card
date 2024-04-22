@@ -106,9 +106,7 @@ const CardModal = ({
       if (isOpen && cardData) {
         form.setValue("cardName", cardData.cardName);
         try {
-          const avatarUrl = await getAvatarUrl(
-            `${cardData.userId}/${cardData.avatarUrl}`,
-          );
+          const avatarUrl = await getAvatarUrl(cardData.avatarUrl);
           const file = await UrlToFile(`${avatarUrl}`, cardData.avatarUrl);
           form.setValue("cardAvatarImg", file);
           setImgFile(file);
@@ -237,7 +235,7 @@ const CardModal = ({
                         className="border-purple-300 text-black focus-visible:border-purple-500 focus-visible:ring-purple-400/50 "
                         placeholder="Enter card name"
                         {...field}
-                          maxLength={30}
+                        maxLength={30}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />

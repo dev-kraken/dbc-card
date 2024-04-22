@@ -4,12 +4,12 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/utils/supabase/server";
-import { DBCardSchema } from "@/zod/CardSchema";
+import { DBCardProfileSchema, DBCardSchema } from "@/zod/CardSchema";
 
 export const AddUpdateCard = async (
   data: FormData,
   mode: string,
-  id: number,
+  id?: number,
 ) => {
   const supabase = createClient();
   const authId = await supabase.auth.getUser().then((res) => res.data.user?.id);
@@ -100,8 +100,94 @@ export const AllCards = async () => {
 
 export const getAvatarUrl = async (pathUrl: string) => {
   const supabase = createClient();
+  const authId = await supabase.auth.getUser().then((res) => res.data.user?.id);
   const { data: cardAvatar } = supabase.storage
     .from("AvatarCards")
-    .getPublicUrl(pathUrl);
+    .getPublicUrl(`${authId}/${pathUrl}`);
   return (cardAvatar?.publicUrl as string) ?? "";
+};
+
+export const AddUpdateCardProfile = async (
+  data: FormData,
+  mode: string,
+  id?: number,
+) => {
+  const supabase = createClient();
+  const authId = await supabase.auth.getUser().then((res) => res.data.user?.id);
+  const values = {
+    profileName: data.get("profileName"),
+    cardProfileImg: data.get("cardProfileImg"),
+    licenseNumber: data.get("licenseNumber"),
+    subHeader: data.get("subHeader"),
+    bio: data.get("bio"),
+    cardId: data.get("cardId"),
+  };
+  const validatedFields = DBCardProfileSchema.safeParse(
+    values as z.infer<typeof DBCardProfileSchema>,
+  );
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
+  }
+  const { profileName, cardProfileImg, licenseNumber, subHeader, bio, cardId } =
+    validatedFields.data;
+
+  try {
+    const { data: ImgData, error: ImgError } = await supabase.storage
+      .from("AvatarCards")
+      .upload(`${authId as string}/${cardProfileImg.name}`, cardProfileImg, {
+        contentType: "image/png",
+        upsert: true,
+      });
+
+    if (ImgError) {
+      return { error: ImgError.message };
+    }
+
+    const { data: cardData, error: cardError } = await supabase
+      .from("cardProfile")
+      .upsert({
+        id: id,
+        cardId: cardId,
+        profileName: profileName,
+        profileImg: cardProfileImg.name,
+        licenseNumber: licenseNumber,
+        subHeader: subHeader,
+        bio: bio,
+      })
+      .select();
+
+    if (cardError) {
+      return { error: cardError.message };
+    }
+
+    revalidatePath("/dashboard/cards/[cardId]/profile");
+    return {
+      success:
+        mode === "update"
+          ? "Profile updated successfully!"
+          : "Profile added successfully!",
+    };
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+};
+
+export const GetCardProfile = async (cardId: string) => {
+  const supabase = createClient();
+  try {
+    let { data: cardProfile, error } = await supabase
+      .from("cardProfile")
+      .select("*")
+      .eq("cardId", cardId)
+      .single();
+    if (error) {
+      console.log(error);
+    }
+    if (!cardProfile) {
+      return null;
+    }
+    return cardProfile as CardProfileT;
+  } catch (error) {
+    console.log(error);
+  }
 };

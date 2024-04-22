@@ -32,6 +32,7 @@ export const DBCardSchema = z.object({
 });
 
 export const DBCardProfileSchema = z.object({
+  cardId: z.string(),
   profileName: z.string().min(1, {
     message: "Card name is required.",
   }),
