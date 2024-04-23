@@ -109,8 +109,8 @@ const ListCardsCard = async ({ card }: CardProps) => {
       <CardContent className="py-4 gap-2 flex items-center justify-between">
         <Avatar className="size-20">
           <AvatarImage
-            src={await getAvatarUrl(`${card.userId}/${card.avatarUrl}`).then(
-              (res) => res.toString(),
+            src={await getAvatarUrl(card.avatarUrl).then((res) =>
+              res.toString(),
             )}
             alt={card.cardName}
           />
