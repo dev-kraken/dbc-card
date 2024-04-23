@@ -116,6 +116,30 @@ export type Database = {
           },
         ]
       }
+      SocialMediaNetwork: {
+        Row: {
+          created_at: string
+          icon: string
+          id: number
+          isDeleted: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          icon: string
+          id?: number
+          isDeleted?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: number
+          isDeleted?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -2,7 +2,7 @@ import {
   ChevronLeft,
   FilePieChart,
   LayoutDashboard,
-  SquareChevronLeft,
+  SquareChevronLeft, SquareMenu,
   TabletSmartphone,
   VenetianMask,
 } from "lucide-react";
@@ -42,6 +42,12 @@ export const homeSidebarLinks = [
     label: "Profile",
     route: "/dashboard/cards/[cardId]/profile",
     icon: VenetianMask,
+    menu: "card",
+  },
+  {
+    label: "Social Media",
+    route: "/dashboard/cards/[cardId]/social-media",
+    icon: SquareMenu,
     menu: "card",
   },
 ];
