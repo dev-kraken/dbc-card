@@ -62,3 +62,11 @@ export const DBCardProfileSchema = z.object({
     message: "Bio is required.",
   }),
 });
+
+export const SocialMedia = z.record(
+    z.string({
+      errorMap: issue => ({
+        message: `${issue.path} is required.`
+      })
+    })
+)

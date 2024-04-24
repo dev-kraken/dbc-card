@@ -17,3 +17,21 @@ export const GetSocialMedia = async () => {
     console.log(error);
   }
 };
+
+
+export const GetCardSocialMedia = async (cardId: string) => {
+  const supabase = createClient();
+  try {
+    let { data: cardSocialMedia, error } = await supabase
+      .from("cardSocialMedia")
+      .select("*")
+      .eq("cardId", cardId)
+      .order("id", { ascending: false });
+    if (error) {
+      console.log(error);
+    }
+    return cardSocialMedia;
+  } catch (error) {
+    console.log(error);
+  }
+}

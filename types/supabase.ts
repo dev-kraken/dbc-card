@@ -116,6 +116,48 @@ export type Database = {
           },
         ]
       }
+      cardSocialMedia: {
+        Row: {
+          cardId: string
+          created_at: string
+          id: number
+          priority: number
+          socialNetworkId: number
+          value: string
+        }
+        Insert: {
+          cardId?: string
+          created_at?: string
+          id?: number
+          priority: number
+          socialNetworkId: number
+          value: string
+        }
+        Update: {
+          cardId?: string
+          created_at?: string
+          id?: number
+          priority?: number
+          socialNetworkId?: number
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_cardSocialMedia_cardId_fkey"
+            columns: ["cardId"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["cardId"]
+          },
+          {
+            foreignKeyName: "public_cardSocialMedia_socialNetworkId_fkey"
+            columns: ["socialNetworkId"]
+            isOneToOne: false
+            referencedRelation: "SocialMediaNetwork"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       SocialMediaNetwork: {
         Row: {
           created_at: string
