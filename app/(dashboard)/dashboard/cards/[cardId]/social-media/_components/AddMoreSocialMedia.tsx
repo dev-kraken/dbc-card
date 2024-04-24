@@ -71,15 +71,14 @@ const AddMoreSocialMedia = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[700px] max-w-[700px]">
-        <PopoverClose
-          className="flex flex-wrap gap-3 items-center justify-between border-purple-4"
-        >
+        <PopoverClose className="flex flex-wrap gap-3 items-center justify-between border-purple-4">
           {socialMediaNetworks?.map((socialMedia, index) => (
             <Button
               key={index}
               variant="default"
-              className="w-36 bg-purple-1 gap-2"
-              onClick={() => addNewInput(socialMedia)}
+              className="w-36 bg-purple-1 gap-2 disabled:pointer-events-auto disabled:cursor-not-allowed"
+              disabled={socialMedia.isDisabled}
+              onClick={() => addNewInput({ ...socialMedia, isDisabled: true })}
             >
               {getIconComponent(socialMedia.icon, "size-4")}
               {socialMedia.name}

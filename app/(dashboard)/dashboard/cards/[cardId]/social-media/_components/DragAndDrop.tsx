@@ -17,7 +17,18 @@ const DragAndDrop = ({ socialMediaNetworks }: DragAndDropProps) => {
     SocialMediaNetworkT[] | []
   >([]);
 
+  const handelButtonDisable = (newInput: SocialMediaNetworkT) => {
+    const disable = newSocialMediaInput.map((input) => {
+      if (input.name === newInput.name) {
+        return newInput;
+      }
+      return input;
+    });
+    setNewSocialMediaInput(disable);
+  };
+
   const addNewInput = (input: SocialMediaNetworkT) => {
+    handelButtonDisable(input);
     setSocialMediaInput([...socialMediaInput, input]);
   };
   return (

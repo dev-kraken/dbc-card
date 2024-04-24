@@ -122,6 +122,7 @@ export type Database = {
           icon: string
           id: number
           isDeleted: boolean
+          isDisabled: boolean
           name: string
         }
         Insert: {
@@ -129,6 +130,7 @@ export type Database = {
           icon: string
           id?: number
           isDeleted?: boolean
+          isDisabled?: boolean
           name: string
         }
         Update: {
@@ -136,6 +138,7 @@ export type Database = {
           icon?: string
           id?: number
           isDeleted?: boolean
+          isDisabled?: boolean
           name?: string
         }
         Relationships: []
