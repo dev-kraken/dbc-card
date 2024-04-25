@@ -1,5 +1,6 @@
 "use server";
 
+import { SocialMediaEntry } from "@/global";
 import { createClient } from "@/utils/supabase/server";
 
 export const GetSocialMedia = async () => {
@@ -18,20 +19,29 @@ export const GetSocialMedia = async () => {
   }
 };
 
-
-export const GetCardSocialMedia = async (cardId: string) => {
+export const GetCardSocialMedia = async (
+  cardId: string,
+): Promise<SocialMediaEntry[] | null> => {
   const supabase = createClient();
   try {
-    let { data: cardSocialMedia, error } = await supabase
+    const { data: cardSocialMedia, error } = await supabase
       .from("cardSocialMedia")
-      .select("*")
-      .eq("cardId", cardId)
-      .order("id", { ascending: false });
+      .select(`id, value, priority, name:SocialMediaNetwork(name)`)
+      .eq("cardId", cardId);
+
     if (error) {
-      console.log(error);
+      throw new Error("Failed to fetch card social media data");
     }
-    return cardSocialMedia;
+
+    // Modify the data structure
+    return (
+      cardSocialMedia?.map((entry) => ({
+        ...entry,
+        name: entry.name?.name || "",
+      })) || null
+    );
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching card social media data:", error);
+    return null;
   }
-}
+};

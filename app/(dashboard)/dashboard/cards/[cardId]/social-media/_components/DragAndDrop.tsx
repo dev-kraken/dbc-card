@@ -17,10 +17,11 @@ import AddMoreSocialMedia from "@/app/(dashboard)/dashboard/cards/[cardId]/socia
 import { z } from "zod";
 import { SocialMedia } from "@/zod/CardSchema";
 import { Button } from "@/components/ui/button";
+import { SocialMediaEntry } from "@/global";
 
 interface DragAndDropProps {
-  socialMediaNetworks: (SocialMediaNetworkT | CardSocialMedia)[] | [];
-  cardSocialMedia: (SocialMediaNetworkT | CardSocialMedia)[] | [];
+  socialMediaNetworks: SocialMediaNetworkT[] | [];
+  cardSocialMedia: SocialMediaEntry[] | [];
 }
 
 const DragAndDrop = ({
@@ -28,10 +29,10 @@ const DragAndDrop = ({
   cardSocialMedia,
 }: DragAndDropProps) => {
   const [newSocialMediaInput, setNewSocialMediaInput] =
-    React.useState<(SocialMediaNetworkT | CardSocialMedia)[]>(socialMediaNetworks);
+    React.useState<SocialMediaNetworkT[]>(socialMediaNetworks);
 
   const [socialMediaInput, setSocialMediaInput] = React.useState<
-      (CardSocialMedia | SocialMediaNetworkT)[] | []
+    SocialMediaEntry[] | []
   >(cardSocialMedia);
 
   const form = useForm<z.infer<typeof SocialMedia>>({
@@ -39,7 +40,7 @@ const DragAndDrop = ({
     defaultValues: {
       ...socialMediaInput.reduce(
         (acc, curr) => {
-          acc[curr.socialNetworkId] = curr.value || "";
+          acc[curr?.name || ""] = curr.value || "";
           return acc;
         },
         {} as Record<string, string>,
@@ -58,7 +59,8 @@ const DragAndDrop = ({
 
   const addNewInput = (input: SocialMediaNetworkT) => {
     handelButtonDisable(input);
-    setSocialMediaInput([...socialMediaInput, input]);
+    const { name } = input;
+    setSocialMediaInput([...socialMediaInput, { name, value: "" }]);
   };
 
   function onSubmit(values: z.infer<typeof SocialMedia>) {
@@ -74,11 +76,11 @@ const DragAndDrop = ({
               <Reorder.Item value={input} key={index}>
                 <FormField
                   control={form.control}
-                  name={input.value as keyof z.infer<typeof SocialMedia>}
+                  name={input?.name as keyof z.infer<typeof SocialMedia>}
                   render={({ field }) => (
                     <FormItem>
                       <div className="flex justify-between items-center mb-4 w-full">
-                        <FormLabel>{input.socialNetworkId}</FormLabel>
+                        <FormLabel>{input?.name}</FormLabel>
                       </div>
                       <FormControl>
                         <Input
