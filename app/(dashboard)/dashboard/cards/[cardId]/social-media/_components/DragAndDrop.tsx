@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   FormControl,
@@ -18,15 +18,20 @@ import { z } from "zod";
 import { SocialMedia } from "@/zod/CardSchema";
 import { Button } from "@/components/ui/button";
 import { SocialMediaEntry } from "@/global";
+import { Trash2 } from "lucide-react";
+import { AddUpdateCardSocialMedia } from "@/action/SocialMedia";
+import { useRouter } from "next/navigation";
 
 interface DragAndDropProps {
-  socialMediaNetworks: SocialMediaNetworkT[] | [];
+  socialMediaNetworks: (SocialMediaNetworkT & { value?: string })[] | [];
   cardSocialMedia: SocialMediaEntry[] | [];
+  cardId: string;
 }
 
 const DragAndDrop = ({
   socialMediaNetworks,
   cardSocialMedia,
+  cardId,
 }: DragAndDropProps) => {
   const [newSocialMediaInput, setNewSocialMediaInput] =
     React.useState<SocialMediaNetworkT[]>(socialMediaNetworks);
@@ -35,6 +40,7 @@ const DragAndDrop = ({
     SocialMediaEntry[] | []
   >(cardSocialMedia);
 
+  const router = useRouter();
   const form = useForm<z.infer<typeof SocialMedia>>({
     resolver: zodResolver(SocialMedia),
     defaultValues: {
@@ -57,14 +63,53 @@ const DragAndDrop = ({
     setNewSocialMediaInput(disable);
   };
 
+  useEffect(() => {
+    const labelsToValues = new Map();
+    socialMediaInput.forEach((item) => {
+      labelsToValues.set(item.name, item.value);
+    });
+    const disable = newSocialMediaInput.map((item) => {
+      if (labelsToValues.has(item.name)) {
+        return { ...item, isDisabled: true };
+      }
+      return item;
+    });
+    setNewSocialMediaInput(disable);
+  }, []);
+
   const addNewInput = (input: SocialMediaNetworkT) => {
     handelButtonDisable(input);
-    const { name } = input;
-    setSocialMediaInput([...socialMediaInput, { name, value: "" }]);
+    const { id, name } = input;
+    setSocialMediaInput([
+      ...socialMediaInput,
+      { socialNetworkId: id, name, value: "" },
+    ]);
+  };
+
+  const removeInput = (input: SocialMediaEntry) => {
+    form.unregister(input.name as keyof z.infer<typeof SocialMedia>);
+    newSocialMediaInput.map((item) => {
+      if (item.name === input.name) {
+        handelButtonDisable({ ...item, isDisabled: false });
+      }
+    });
+    setSocialMediaInput(socialMediaInput.filter((item) => item !== input));
   };
 
   function onSubmit(values: z.infer<typeof SocialMedia>) {
-    console.log(values);
+    const data = socialMediaInput.map((input, index) => ({
+      id: input?.id,
+      value: values[input?.name as keyof z.infer<typeof SocialMedia>] || "",
+      priority: index + 1,
+      cardId: cardId,
+      socialNetworkId: input.socialNetworkId || input.id,
+    }));
+
+    AddUpdateCardSocialMedia(data).then((r) => {
+      if (r?.success) {
+        router.prefetch(`/dashboard/cards/${cardId}/social-media`);
+      }
+    });
   }
 
   return (
@@ -72,8 +117,12 @@ const DragAndDrop = ({
       <Reorder.Group values={socialMediaInput} onReorder={setSocialMediaInput}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {socialMediaInput.map((input, index) => (
-              <Reorder.Item value={input} key={index}>
+            {socialMediaInput.map((input) => (
+              <Reorder.Item
+                value={input}
+                key={input.id || input.socialNetworkId}
+                className="p-3 border border-gray-300 rounded-lg mb-4 bg-white"
+              >
                 <FormField
                   control={form.control}
                   name={input?.name as keyof z.infer<typeof SocialMedia>}
@@ -81,6 +130,10 @@ const DragAndDrop = ({
                     <FormItem>
                       <div className="flex justify-between items-center mb-4 w-full">
                         <FormLabel>{input?.name}</FormLabel>
+                        <Trash2
+                          className="size-4 cursor-pointer text-destructive"
+                          onClick={() => removeInput(input)}
+                        />
                       </div>
                       <FormControl>
                         <Input

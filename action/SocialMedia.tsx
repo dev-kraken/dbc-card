@@ -2,6 +2,7 @@
 
 import { SocialMediaEntry } from "@/global";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export const GetSocialMedia = async () => {
   const supabase = createClient();
@@ -26,8 +27,10 @@ export const GetCardSocialMedia = async (
   try {
     const { data: cardSocialMedia, error } = await supabase
       .from("cardSocialMedia")
-      .select(`id, value, priority, name:SocialMediaNetwork(name)`)
-      .eq("cardId", cardId);
+      .select(
+        `id, value, priority,socialNetworkId,SocialMediaNetwork(name, id)`,
+      )
+      .eq("cardId", cardId).order("priority", { ascending: true });
 
     if (error) {
       throw new Error("Failed to fetch card social media data");
@@ -37,11 +40,55 @@ export const GetCardSocialMedia = async (
     return (
       cardSocialMedia?.map((entry) => ({
         ...entry,
-        name: entry.name?.name || "",
+        name: entry?.SocialMediaNetwork?.name || "",
+        socialId: entry?.SocialMediaNetwork?.id || 0,
       })) || null
     );
   } catch (error) {
     console.error("Error fetching card social media data:", error);
     return null;
+  }
+};
+
+export const AddUpdateCardSocialMedia = async (value: any) => {
+  try {
+    const supabase = createClient();
+
+    // Separate the data into two arrays: one with IDs and one without IDs
+    const dataWithIds = value.filter((item: any) => item.id !== undefined);
+    const dataWithoutIds = value.filter((item: any) => item.id === undefined);
+
+    // Upsert the data with IDs
+    let { data: cardSocialMediaWithIds, error: errorWithIds } = await supabase
+      .from("cardSocialMedia")
+      .upsert(dataWithIds)
+      .select('id, priority');
+
+    if (errorWithIds) {
+      return {
+        error: errorWithIds.message,
+      };
+    }
+
+    // Upsert the data without IDs, if any
+    if (dataWithoutIds.length > 0) {
+      let { data: cardSocialMediaWithoutIds, error: errorWithoutIds } =
+        await supabase.from("cardSocialMedia").upsert(dataWithoutIds).select();
+
+      if (errorWithoutIds) {
+        return {
+          error: errorWithoutIds.message,
+        };
+      }
+    }
+
+    revalidatePath(`/dashboard/cards/${value[0].cardId}/social-media`);
+    // Return the combined result
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log("Error:", error);
+    throw error; // Rethrow the error to be handled by the caller
   }
 };

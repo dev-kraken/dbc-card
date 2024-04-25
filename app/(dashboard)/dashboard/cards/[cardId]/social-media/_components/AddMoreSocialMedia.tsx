@@ -23,7 +23,7 @@ import { SiZillow } from "react-icons/si";
 import { PopoverClose } from "@radix-ui/react-popover";
 
 interface AddMoreSocialMediaProps {
-  socialMediaNetworks: SocialMediaNetworkT[];
+  socialMediaNetworks: (SocialMediaNetworkT & { value?: string })[] | [];
   addNewInput: (input: SocialMediaNetworkT) => void;
 }
 
