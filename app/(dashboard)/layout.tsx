@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
-import {Toaster} from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/toaster";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (
@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
           {children}
         </section>
       </div>
-        <Toaster />
+      <Toaster />
     </main>
   );
 };
