@@ -33,26 +33,33 @@ const DragAndDrop = ({
   cardSocialMedia,
   cardId,
 }: DragAndDropProps) => {
-  const [newSocialMediaInput, setNewSocialMediaInput] =
+  let [newSocialMediaInput, setNewSocialMediaInput] =
     React.useState<SocialMediaNetworkT[]>(socialMediaNetworks);
 
-  const [socialMediaInput, setSocialMediaInput] = React.useState<
+  let [socialMediaInput, setSocialMediaInput] = React.useState<
     SocialMediaEntry[] | []
-  >(cardSocialMedia);
+  >(cardSocialMedia || []);
 
   const router = useRouter();
   const form = useForm<z.infer<typeof SocialMedia>>({
     resolver: zodResolver(SocialMedia),
     defaultValues: {
-      ...socialMediaInput.reduce(
-        (acc, curr) => {
-          acc[curr?.name || ""] = curr.value || "";
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
+      ...(Array.isArray(socialMediaInput && socialMediaInput)
+        ? socialMediaInput.reduce(
+            (
+              acc: Record<string, string>,
+              curr: { name: any; value: string },
+            ) => {
+              const name = curr?.name || "";
+              acc[name] = curr.value || "";
+              return acc;
+            },
+            {},
+          )
+        : {}),
     },
   });
+
   const handelButtonDisable = (newInput: SocialMediaNetworkT) => {
     const disable = newSocialMediaInput.map((input) => {
       if (input.name === newInput.name) {
@@ -68,14 +75,35 @@ const DragAndDrop = ({
     socialMediaInput.forEach((item) => {
       labelsToValues.set(item.name, item.value);
     });
-    const disable = newSocialMediaInput.map((item) => {
+    const updatedDisable = newSocialMediaInput.map((item) => {
       if (labelsToValues.has(item.name)) {
-        return { ...item, isDisabled: true };
+        if (!item.isDisabled) {
+          return { ...item, isDisabled: true };
+        }
+      } else {
+        if (item.isDisabled) {
+          return { ...item, isDisabled: false };
+        }
       }
       return item;
     });
-    setNewSocialMediaInput(disable);
-  }, []);
+
+    // Check if the state needs to be updated before setting it
+    if (!arraysEqual(updatedDisable, newSocialMediaInput)) {
+      setNewSocialMediaInput(updatedDisable);
+    }
+  }, [newSocialMediaInput, socialMediaInput]);
+
+  // Utility function to compare arrays
+  function arraysEqual(a: string | any[] | null, b: string | any[] | null) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
 
   const addNewInput = (input: SocialMediaNetworkT) => {
     handelButtonDisable(input);

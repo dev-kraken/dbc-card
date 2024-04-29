@@ -11,7 +11,7 @@ export interface SocialMediaEntry {
   id?: number;
   value: string;
   priority?: number;
-  name?: string;
+  name: string;
   socialNetworkId?: number;
-  socialId?:number
+  socialId?: number;
 }
