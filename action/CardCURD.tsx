@@ -160,7 +160,7 @@ export const AddUpdateCardProfile = async (
       return { error: cardError.message };
     }
 
-    revalidatePath("/dashboard/cards/[cardId]/profile");
+    revalidatePath("/(dashboard)/dashboard/cards/[cardId]/profile", "page");
     return {
       success:
         mode === "update"

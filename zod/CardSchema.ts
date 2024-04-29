@@ -64,9 +64,29 @@ export const DBCardProfileSchema = z.object({
 });
 
 export const SocialMedia = z.record(
-    z.string({
-      errorMap: issue => ({
-        message: `${issue.path} is required.`
-      })
-    })
-)
+  z.string({
+    errorMap: (issue) => ({
+      message: `${issue.path} is required.`,
+    }),
+  }),
+);
+
+export const SocialMediaBackend = z.array(
+  z.object({
+    id: z.number().min(1, {
+      message: "Id is required.",
+    }),
+    value: z.string().min(4, {
+      message: "Value is required.",
+    }),
+    priority: z.number().min(1, {
+      message: "Priority is required.",
+    }),
+    cardId: z.string().min(5, {
+      message: "Card id is required.",
+    }),
+    socialNetworkId: z.number().min(1, {
+      message: "Social network id is required.",
+    }),
+  }),
+);
