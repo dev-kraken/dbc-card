@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -23,7 +22,6 @@ import {
 } from "@/components/ui/form";
 import { DeleteCard } from "@/action/CardCURD";
 import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   deleteCard: z
@@ -81,42 +79,46 @@ const DeleteCardButton = ({ cardName, cardId }: DeleteCardButtonProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Are you sure?</h4>
-            <p className="text-sm text-muted-foreground">
-              This action cannot be undone.
-            </p>
-          </div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="deleteCard"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs">
-                      Card Name:{" "}
-                      <span className="text-lg text-red-500 font-semibold">
-                        {cardName ?? ""}
-                      </span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="type delete..." {...field} />
-                    </FormControl>
-                    <FormDescription className="text-xs">
-                      Please type <strong>delete</strong> to confirm.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" variant="destructive">
-                Delete
-              </Button>
-            </form>
-          </Form>
-        </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="space-y-2">
+              <h4 className="font-medium leading-none">Are you sure?</h4>
+              <p className="text-sm text-muted-foreground">
+                This action cannot be undone.
+              </p>
+            </div>
+            <FormField
+              control={form.control}
+              name="deleteCard"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs">
+                    Card Name:{" "}
+                    <span className="text-lg text-red-500 font-semibold">
+                      {cardName ?? ""}
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="type delete..." {...field} />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Please type <strong>delete</strong> to confirm.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              variant="destructive"
+              aria-label="Delete"
+              aria-controls="delete-card"
+              asChild
+            >
+              <p>Delete</p>
+            </Button>
+          </form>
+        </Form>
       </PopoverContent>
     </Popover>
   );

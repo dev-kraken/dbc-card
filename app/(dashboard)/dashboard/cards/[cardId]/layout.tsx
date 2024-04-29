@@ -4,7 +4,7 @@ import {
   PageLayoutContent,
   PageLayoutHeader,
 } from "@/components/ui/page-layout";
-import {Radio} from "lucide-react";
+import { Radio } from "lucide-react";
 
 interface CardEditLayoutProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface CardEditLayoutProps {
 const CardEditLayout = ({ children }: CardEditLayoutProps) => {
   return (
     <PageLayout>
-      <PageLayoutHeader title= "Dashboard" />
+      <PageLayoutHeader title="Dashboard" />
       <PageLayoutContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
           <div className="col-span-2 w-full">{children}</div>

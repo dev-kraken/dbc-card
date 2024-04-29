@@ -26,14 +26,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DeleteCardButton from "@/app/(dashboard)/dashboard/cards/_components/DeleteCardButton";
 import Link from "next/link";
 import AddUpdateCardModal from "@/app/(dashboard)/dashboard/cards/_components/AddUpdateCardModal";
-import { createClient } from "@/utils/supabase/server";
-import { getAvatarUrl } from "@/action/CardCURD";
 
 interface CardProps {
   card: AllCardsListT;
+  imageUrl: string;
 }
 
-const ListCardsCard = async ({ card }: CardProps) => {
+const ListCardsCard = ({ card, imageUrl }: CardProps) => {
   return (
     <Card className="w-full sm:w-full md:w-[25rem] border-purple-4/50">
       <CardHeader className="p-2 border-b flex">
@@ -49,9 +48,8 @@ const ListCardsCard = async ({ card }: CardProps) => {
                     cardData={card}
                   >
                     <Pencil className="size-4" />
-                    <span className="sr-only">Rename Card</span>
                   </AddUpdateCardModal>
-                  <span className="sr-only">Rename Card</span>
+                  <span className="sr-only">Copy Link</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent>Rename Card</TooltipContent>
@@ -82,7 +80,7 @@ const ListCardsCard = async ({ card }: CardProps) => {
                 <div>
                   <DeleteCardButton
                     cardName={card.cardName}
-                    cardId={card.cardId ?? ""}
+                    cardId={card.cardId}
                   />
                   <span className="sr-only">Delete Card</span>
                 </div>
@@ -108,12 +106,7 @@ const ListCardsCard = async ({ card }: CardProps) => {
       </CardHeader>
       <CardContent className="py-4 gap-2 flex items-center justify-between">
         <Avatar className="size-20">
-          <AvatarImage
-            src={await getAvatarUrl(card.avatarUrl).then((res) =>
-              res.toString(),
-            )}
-            alt={card.cardName}
-          />
+          <AvatarImage src={imageUrl} alt={card.cardName} />
           <AvatarFallback>
             {card.cardName
               .split(" ")
