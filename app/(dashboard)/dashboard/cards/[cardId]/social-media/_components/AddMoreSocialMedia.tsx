@@ -1,10 +1,5 @@
 "use client";
 import React from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
   FaFacebookF,
@@ -20,7 +15,13 @@ import { BiLogoGmail, BiLogoTelegram } from "react-icons/bi";
 import { BsPhoneFill } from "react-icons/bs";
 import { AiOutlineGlobal } from "react-icons/ai";
 import { SiZillow } from "react-icons/si";
-import { PopoverClose } from "@radix-ui/react-popover";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface AddMoreSocialMediaProps {
   socialMediaNetworks: (SocialMediaNetworkT & { value?: string })[] | [];
@@ -64,33 +65,29 @@ const AddMoreSocialMedia = ({
   addNewInput,
 }: AddMoreSocialMediaProps) => {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="default" className="mx-auto w-full">
-          Open popover
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[700px] max-w-[700px] flex flex-wrap gap-3 items-center justify-between border-purple-4">
+    <Card className="w-full shadow-sm">
+      <CardHeader>
+        <CardTitle>Select Media</CardTitle>
+        <CardDescription>What would you like to show in card?</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-3 justify-center items-center">
         {socialMediaNetworks.map((socialMedia, index) => {
           return (
-            <PopoverClose key={index} asChild>
-              <Button
-                variant="default"
-                className="w-36 bg-purple-1 gap-2 disabled:pointer-events-auto disabled:cursor-not-allowed"
-                disabled={socialMedia.isDisabled}
-                onClick={() =>
-                  addNewInput({ ...socialMedia, isDisabled: true })
-                }
-                aria-label={socialMedia.name}
-              >
-                {getIconComponent(socialMedia.icon, "size-4")}
-                <p>{socialMedia.name}</p>
-              </Button>
-            </PopoverClose>
+            <Button
+              key={index}
+              variant="default"
+              className="w-36 bg-purple-1 gap-2 disabled:pointer-events-auto disabled:cursor-not-allowed"
+              disabled={socialMedia.isDisabled}
+              onClick={() => addNewInput({ ...socialMedia, isDisabled: true })}
+              aria-label={socialMedia.name}
+            >
+              {getIconComponent(socialMedia.icon, "size-4")}
+              <p>{socialMedia.name}</p>
+            </Button>
           );
         })}
-      </PopoverContent>
-    </Popover>
+      </CardContent>
+    </Card>
   );
 };
 

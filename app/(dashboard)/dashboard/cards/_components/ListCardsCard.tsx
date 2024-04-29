@@ -76,7 +76,7 @@ const ListCardsCard = ({ card, imageUrl }: CardProps) => {
             </Tooltip>
             <Separator orientation="vertical" className="mx-1 h-6" />
             <Tooltip>
-              <TooltipTrigger asChild>
+              <TooltipTrigger asChild aria-controls="delete-card:popover">
                 <div>
                   <DeleteCardButton
                     cardName={card.cardName}

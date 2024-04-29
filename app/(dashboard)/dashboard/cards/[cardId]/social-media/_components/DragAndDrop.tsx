@@ -18,7 +18,7 @@ import { z } from "zod";
 import { SocialMedia } from "@/zod/CardSchema";
 import { Button } from "@/components/ui/button";
 import { SocialMediaEntry } from "@/global";
-import { Trash2 } from "lucide-react";
+import { BadgePlus, Trash2 } from "lucide-react";
 import { AddUpdateCardSocialMedia } from "@/action/SocialMedia";
 import { useRouter } from "next/navigation";
 
@@ -141,8 +141,12 @@ const DragAndDrop = ({
   }
 
   return (
-    <main>
-      <Reorder.Group values={socialMediaInput} onReorder={setSocialMediaInput}>
+    <main className="grid grid-cols-3 gap-3">
+      <Reorder.Group
+        className="col-span-2"
+        values={socialMediaInput}
+        onReorder={setSocialMediaInput}
+      >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             {socialMediaInput.map((input) => (
@@ -176,8 +180,13 @@ const DragAndDrop = ({
                 />
               </Reorder.Item>
             ))}
-            <Button type="submit" variant="default" className="w-full">
-              Save
+            <Button
+              type="submit"
+              variant="default"
+              className="bg-purple-1 w-36 text-white hover:bg-purple-2 gap-1 float-end"
+            >
+              <BadgePlus className="size-4" />
+              Save Media
             </Button>
           </form>
         </Form>
