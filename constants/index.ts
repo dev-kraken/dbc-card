@@ -1,6 +1,6 @@
 import {
-  ChevronLeft,
   FilePieChart,
+  Home,
   LayoutDashboard,
   SquareChevronLeft,
   SquareMenu,
@@ -49,6 +49,12 @@ export const homeSidebarLinks = [
     label: "Social Media",
     route: "/dashboard/cards/[cardId]/social-media",
     icon: SquareMenu,
+    menu: "card",
+  },
+  {
+    label: "Listings",
+    route: "/dashboard/cards/[cardId]/listings",
+    icon: Home,
     menu: "card",
   },
 ];
