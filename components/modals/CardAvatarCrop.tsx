@@ -1,13 +1,13 @@
 "use client";
 import React, {
-  useRef,
-  useState,
-  SyntheticEvent,
   Dispatch,
   SetStateAction,
+  SyntheticEvent,
+  useRef,
+  useState,
 } from "react";
 import Image from "next/image";
-import ReactCrop, { makeAspectCrop, PixelCrop, Crop } from "react-image-crop";
+import ReactCrop, { Crop, makeAspectCrop, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import {
   Dialog,

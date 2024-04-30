@@ -1,4 +1,4 @@
-import {AiFillExclamationCircle} from "react-icons/ai";
+import { AiFillExclamationCircle } from "react-icons/ai";
 
 interface AuthFormErrorProps {
   message?: string;

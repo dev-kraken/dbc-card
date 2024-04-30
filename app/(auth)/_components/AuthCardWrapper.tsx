@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
-import AuthCardSocial from '@/app/(auth)/_components/AuthCardSocial';
-import AuthCardHeader from '@/app/(auth)/_components/AuthCardHeader';
-import AuthCardFooter from '@/app/(auth)/_components/AuthCardFooter';
+import AuthCardSocial from "@/app/(auth)/_components/AuthCardSocial";
+import AuthCardHeader from "@/app/(auth)/_components/AuthCardHeader";
+import AuthCardFooter from "@/app/(auth)/_components/AuthCardFooter";
 
 interface AuthCardWrapperProps {
   children: React.ReactNode;
@@ -44,7 +44,7 @@ const AuthCardWrapper = ({
         {showSocialLogin && <AuthCardSocial isPending={isPending} />}
         {children}
       </CardContent>
-      <CardFooter className='relative z-10 bg-white rounded-b-md'>
+      <CardFooter className="relative z-10 bg-white rounded-b-md">
         <AuthCardFooter
           label={backButtonLabel}
           title={backButtonTitle}

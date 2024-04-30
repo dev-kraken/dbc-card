@@ -1,24 +1,34 @@
-'use client';
-import React from 'react';
+"use client";
+import React from "react";
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
 
 interface AuthCardSocialProps {
-  isPending?: boolean
+  isPending?: boolean;
 }
-const AuthCardSocial = ({isPending}: AuthCardSocialProps) => {
+const AuthCardSocial = ({ isPending }: AuthCardSocialProps) => {
   return (
     <>
       <div className="flex w-full items-center gap-x-2">
-        <Button variant="outline" disabled={isPending} className="w-full text-xs font-medium gap-x-2" size="lg">
+        <Button
+          variant="outline"
+          disabled={isPending}
+          className="w-full text-xs font-medium gap-x-2"
+          size="lg"
+        >
           <FcGoogle className="size-5" />
           Google
         </Button>
-        <Button variant="outline" disabled={isPending} className="w-full text-xs gap-x-2 font-medium" size="lg">
+        <Button
+          variant="outline"
+          disabled={isPending}
+          className="w-full text-xs gap-x-2 font-medium"
+          size="lg"
+        >
           <FaFacebook className="size-5 text-[#3b5998]" />
           Facebook
         </Button>

@@ -75,4 +75,3 @@ export const SignedInUser = async () => {
   }
   return data.user;
 };
-

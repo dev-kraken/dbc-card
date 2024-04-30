@@ -1,8 +1,8 @@
-import React from 'react';
-import SignInForm from '@/app/(auth)/_components/SignInForm';
+import React from "react";
+import SignInForm from "@/app/(auth)/_components/SignInForm";
 
 const SignIn = () => {
-  return <SignInForm />
+  return <SignInForm />;
 };
 
 export default SignIn;

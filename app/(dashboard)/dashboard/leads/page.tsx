@@ -1,6 +1,7 @@
 import React from "react";
 import {
-  PageLayout, PageLayoutContent,
+  PageLayout,
+  PageLayoutContent,
   PageLayoutHeader,
 } from "@/components/ui/page-layout";
 import { Button } from "@/components/ui/button";

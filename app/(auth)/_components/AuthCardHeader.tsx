@@ -1,5 +1,5 @@
-import { Bird } from 'lucide-react';
-import React from 'react';
+import { Bird } from "lucide-react";
+import React from "react";
 
 interface AuthHeaderProps {
   label: string;

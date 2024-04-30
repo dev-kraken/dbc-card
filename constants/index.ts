@@ -2,7 +2,8 @@ import {
   ChevronLeft,
   FilePieChart,
   LayoutDashboard,
-  SquareChevronLeft, SquareMenu,
+  SquareChevronLeft,
+  SquareMenu,
   TabletSmartphone,
   VenetianMask,
 } from "lucide-react";
