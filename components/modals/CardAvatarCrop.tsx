@@ -22,7 +22,6 @@ import { Slider } from "@/components/ui/slider";
 import { useDebounceEffect } from "@/components/modals/DebounceEffect";
 import { canvasPreview } from "@/components/modals/CanvasPreview";
 import { MdPhotoSizeSelectLarge } from "react-icons/md";
-import { v4 as uuidv4 } from "uuid";
 
 // Type for the props
 interface CardAvatarCropProps {
@@ -115,31 +114,41 @@ const CardAvatarCrop: React.FC<CardAvatarCropProps> = ({
       completedCrop.width * scaleX,
       completedCrop.height * scaleY,
     );
-    const ctx = offscreen.getContext("2d");
-    if (!ctx) {
+    const offscreenCtx = offscreen.getContext(
+      "2d",
+    ) as OffscreenCanvasRenderingContext2D;
+    if (!offscreenCtx) {
       throw new Error("No 2d context");
     }
 
     // Draw image on offscreen canvas
-    ctx.drawImage(
-      previewCanvas,
-      0,
-      0,
-      previewCanvas.width,
-      previewCanvas.height,
+    offscreenCtx.drawImage(
+      image,
+      completedCrop.x * scaleX,
+      completedCrop.y * scaleY,
+      completedCrop.width * scaleX,
+      completedCrop.height * scaleY,
       0,
       0,
       offscreen.width,
       offscreen.height,
     );
 
-    // Convert canvas to blob
-    const blob = await offscreen.convertToBlob({ type: "image/png" });
+    // Convert canvas to blob with improved error handling
+    const blob = await offscreen
+      .convertToBlob({ type: "image/png" })
+      .catch((error) => {
+        console.error("Failed to convert canvas to blob:", error);
+        throw new Error("Failed to generate image file");
+      });
 
-    // Set image file
-    setImgFile(
-      new File([blob as Blob], `${uuidv4()}.png`, { type: "image/png" }),
-    );
+    if (!blob) {
+      throw new Error("Failed to convert canvas to blob");
+    }
+
+    // Set image file with simpler filename generation
+    const filename = `cropped-image-${Date.now()}.png`;
+    setImgFile(new File([blob], filename, { type: "image/png" }));
 
     // Close modal
     onClose();
