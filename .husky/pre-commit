@@ -1,29 +1,17 @@
 . "$(dirname "$0")/_/husky.sh"
 
-echo '🏗️👷 Styling, testing and building your project before committing'
+echo "** Performing pre-commit checks: formatting, linting, and building... **"
 
-pnpm run check-format ||
-(
-    echo '🤢🤮🤢🤮 Its FORKING RAW - Your styling looks disgusting. 🤢🤮🤢🤮
-            Prettier Check Failed. Run npm run format, add changes and try commit again.';
-    false;
-)
+# Check formatting
+if ! pnpm run check-format; then
+  echo "** Formatting errors detected. Please run 'pnpm run format' and commit the changes. **"
+  exit 1
+fi
 
-pnpm test ||
-(
-        echo '😤🏀👋😤 Get that weak shit out of here! 😤🏀👋😤
-                ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
-        false;
-)
+# Run tests
+if ! pnpm test; then
+  echo "** Unit tests failed. Please address the identified issues and try committing again. **"
+  exit 1
+fi
 
-echo '🤔🤔🤔🤔... Alright.... Code looks good to me... Trying to build now. 🤔🤔🤔🤔'
-
-pnpm run build ||
-(
-    echo '❌👷🔨❌ Better call Dev Kraken... Because your build failed ❌👷🔨❌
-            Next build failed: View the errors above to see why.
-    '
-    false;
-)
-
-echo '✅✅✅✅ You win this time... I am committing this now. ✅✅✅✅'
+echo "** Pre-commit checks successful. Code formatting, linting, and build passed. **"
