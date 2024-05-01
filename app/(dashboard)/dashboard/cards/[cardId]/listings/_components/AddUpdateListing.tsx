@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import CardModal from "@/components/modals/CardModal";
+import ListingCardModal from "@/components/modals/ListingCardModal";
 
 interface AddUpdateCardProps {
   variant?: "ghost" | "outline";
@@ -20,7 +20,7 @@ const AddUpdateListing = ({
   cardData,
   children,
 }: AddUpdateCardProps) => {
-  const [modalState, setModalState] = useState<"addNewCard" | undefined>(
+  const [modalState, setModalState] = useState<"addNewCardListing" | undefined>(
     undefined,
   );
   return (
@@ -28,16 +28,16 @@ const AddUpdateListing = ({
       <Button
         variant={variant}
         className={className}
-        onClick={() => setModalState("addNewCard")}
+        onClick={() => setModalState("addNewCardListing")}
         size={size ?? "default"}
       >
         {children}
       </Button>
-      <CardModal
-        isOpen={modalState === "addNewCard"}
+      <ListingCardModal
+        isOpen={modalState === "addNewCardListing"}
         onClose={() => setModalState(undefined)}
-        title={mode === "update" ? "Update Card" : "Add New Card"}
-        buttonText={mode === "update" ? "Update Card" : "Add New Card"}
+        title={mode === "update" ? "Update Listing" : "Add New Listing"}
+        buttonText={mode === "update" ? "Update Listing" : "Add New Listing"}
         cardData={cardData}
         mode={mode}
       />
