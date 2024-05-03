@@ -13,7 +13,7 @@ export const ListingSchema = z.object({
   zipcode: z.string().min(1, {
     message: "Zip Code is required",
   }),
-  propertyType: z.string().min(1, {
+  propertyType: z.number().min(1, {
     message: "Property Type is required",
   }),
   price: z.number().positive().min(1, {
