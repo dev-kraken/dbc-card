@@ -60,16 +60,16 @@ const ListingCardModal = ({
     defaultValues: {
       street: "",
       city: "",
-      stateId: 0,
+      stateId: "",
       zipcode: "",
-      propertyType: 0,
-      price: 0,
-      bedrooms: 0,
-      bathrooms: 0,
-      squareFootage: 0,
-      lotSize: 0,
-      yearBuilt: 0,
-      countryId: 0,
+      propertyType: "",
+      price: "",
+      bedrooms: "",
+      bathrooms: "",
+      squareFootage: "",
+      lotSize: "",
+      yearBuilt: "",
+      countryId: "",
       description: "",
     },
   });
@@ -110,7 +110,7 @@ const ListingCardModal = ({
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value.toString()}
+                      defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>

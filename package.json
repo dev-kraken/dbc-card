@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "check-format": "prettier --check .",
+    "make-format": "prettier --write .",
     "prepare": "husky",
     "test": "pnpm lint"
   },
