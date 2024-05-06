@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { listingPropertyTypes } from "@/constants/ListingHome";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ListingCardModalProps {
   isOpen: boolean;
@@ -63,6 +64,7 @@ const ListingCardModal = ({
       stateId: "",
       zipcode: "",
       propertyType: "",
+      parking: "",
       price: "",
       bedrooms: "",
       bathrooms: "",
@@ -88,7 +90,7 @@ const ListingCardModal = ({
   };
   return (
     <Dialog open={isOpen} onOpenChange={handelClose}>
-      <DialogContent className="flex w-full sm:max-w-3xl overflow-hidden flex-col gap-6 border-none px-6 py-9">
+      <DialogContent className="flex w-full sm:max-w-4xl overflow-hidden flex-col gap-6 border-none px-6 py-9">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">
             {title}
@@ -99,7 +101,7 @@ const ListingCardModal = ({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-6 gap-3">
+            <div className="grid grid-cols-5 gap-3">
               <FormField
                 control={form.control}
                 name="propertyType"
@@ -128,7 +130,7 @@ const ListingCardModal = ({
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -148,7 +150,287 @@ const ListingCardModal = ({
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="yearBuilt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Year Built
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="2024"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="squareFootage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Square Footage
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="0"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lotSize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Lot Size
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Lot Size"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bedrooms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Bedrooms
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Bedrooms" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">1</SelectItem>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="3">3</SelectItem>
+                        <SelectItem value="4">4</SelectItem>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="6">6</SelectItem>
+                        <SelectItem value="7">7</SelectItem>
+                        <SelectItem value="8">8</SelectItem>
+                        <SelectItem value="9">9</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="11">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bathrooms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Bathrooms
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Bathrooms" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">1</SelectItem>
+                        <SelectItem value="2">2</SelectItem>
+                        <SelectItem value="3">3</SelectItem>
+                        <SelectItem value="4">4</SelectItem>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="6">6</SelectItem>
+                        <SelectItem value="7">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="parking"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Parking
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Lot Size"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="countryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Country
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Country" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">United States</SelectItem>
+                        <SelectItem value="2">Canada</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="street"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Street
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Enter Street"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      City
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Enter City"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="stateId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                      State
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="State" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">State Name 1</SelectItem>
+                        <SelectItem value="2">State Name 2</SelectItem>
+                        <SelectItem value="3">State Name 3</SelectItem>
+                        <SelectItem value="4">State Name 4</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="zipcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Zip Code
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="10001"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="col-span-5">
+                    <FormLabel className="text-xs text-zinc-500 dark:text-secondary/70">
+                      Description
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Tell us a bit about your listing"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />

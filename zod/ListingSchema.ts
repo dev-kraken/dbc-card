@@ -19,6 +19,9 @@ export const ListingSchema = z.object({
   price: z.string().min(1, {
     message: "Price is required",
   }),
+  parking: z.string().min(1, {
+    message: "Parking is required",
+  }),
   bedrooms: z.string().min(1, {
     message: "Bedrooms is required",
   }),
