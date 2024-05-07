@@ -34,6 +34,7 @@ import {
 import { listingPropertyTypes } from "@/constants/ListingHome";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { State, states } from "@/constants/states";
 
 interface ListingCardModalProps {
   isOpen: boolean;
@@ -54,7 +55,7 @@ const ListingCardModal = ({
 }: ListingCardModalProps) => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>(undefined);
-
+  const [allStates, setAllStates] = useState<State[]>([]);
   type formSchema = z.infer<typeof ListingSchema>;
   const form = useForm({
     resolver: zodResolver(ListingSchema),
@@ -309,7 +310,14 @@ const ListingCardModal = ({
                       Country
                     </FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        form.resetField("stateId");
+                        const filteredStates = states.filter(
+                          (state) => state.country === value,
+                        );
+                        setAllStates(filteredStates);
+                      }}
                       defaultValue={field.value}
                       value={field.value}
                     >
@@ -319,8 +327,8 @@ const ListingCardModal = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="1">United States</SelectItem>
-                        <SelectItem value="2">Canada</SelectItem>
+                        <SelectItem value="US">United States</SelectItem>
+                        <SelectItem value="Canada">Canada</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage className="text-xs" />
@@ -385,10 +393,19 @@ const ListingCardModal = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="1">State Name 1</SelectItem>
-                        <SelectItem value="2">State Name 2</SelectItem>
-                        <SelectItem value="3">State Name 3</SelectItem>
-                        <SelectItem value="4">State Name 4</SelectItem>
+                        {allStates?.map((state) => (
+                          <SelectItem
+                            key={state.abbreviation}
+                            value={state.abbreviation}
+                          >
+                            {state.abbreviation}
+                          </SelectItem>
+                        ))}
+                        {allStates.length === 0 && (
+                          <SelectItem disabled value="1">
+                            Select Country
+                          </SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage className="text-xs" />
