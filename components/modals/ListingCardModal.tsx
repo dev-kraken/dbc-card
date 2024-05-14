@@ -35,6 +35,7 @@ import { listingPropertyTypes } from "@/constants/ListingHome";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { State, states } from "@/constants/states";
+import useNumberInput from "@/hooks/useNumberInput";
 
 interface ListingCardModalProps {
   isOpen: boolean;
@@ -56,6 +57,7 @@ const ListingCardModal = ({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>(undefined);
   const [allStates, setAllStates] = useState<State[]>([]);
+  const { onKeyDown, onPaste, errorMessage } = useNumberInput();
   type formSchema = z.infer<typeof ListingSchema>;
   const form = useForm({
     resolver: zodResolver(ListingSchema),
@@ -166,9 +168,14 @@ const ListingCardModal = ({
                     <FormControl>
                       <Input
                         disabled={isPending}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={4}
                         className="text-black focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="2024"
                         {...field}
+                        onKeyDown={onKeyDown}
+                        onPaste={onPaste}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
