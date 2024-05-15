@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { IoAddOutline } from "react-icons/io5";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 import ModalFormError from "@/components/modals/ModalFormError";
 import { ListingSchema } from "@/zod/ListingSchema";
 import {
@@ -36,6 +36,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { State, states } from "@/constants/states";
 import useNumberInput from "@/hooks/useNumberInput";
+import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
+import Image from "next/image";
 
 interface ListingCardModalProps {
   isOpen: boolean;
@@ -57,11 +59,15 @@ const ListingCardModal = ({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>(undefined);
   const [allStates, setAllStates] = useState<State[]>([]);
+  const [listingImgSrc, setListingImgSrc] = useState<string[]>([]);
   const { onKeyDown, onPaste, errorMessage } = useNumberInput();
+  const [active, setActive] = useState(0);
+
   type formSchema = z.infer<typeof ListingSchema>;
   const form = useForm({
     resolver: zodResolver(ListingSchema),
     defaultValues: {
+      listingImage: [new File([], "")],
       street: "",
       city: "",
       stateId: "",
@@ -91,6 +97,61 @@ const ListingCardModal = ({
     setError(undefined);
     onClose();
   };
+  const onListingDrop = (acceptedFiles: File[]) => {
+    const imageField = form.getValues("listingImage");
+    const limitLength =
+      imageField.length === 0 ? 0 : imageField.length + acceptedFiles.length;
+    if (acceptedFiles.length === 0) {
+      form.setError("listingImage", {
+        message: "Please add at least 2 images.",
+      });
+    }
+
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      for (let j = 0; j < imageField.length; j++) {
+        if (acceptedFiles[i].name === imageField[j].name) {
+          acceptedFiles.splice(i, 1);
+          i--;
+          break;
+        }
+      }
+    }
+
+    if (acceptedFiles.length > 5 || limitLength > 5) {
+      form.setError("listingImage", { message: "Max image limit is 5." });
+      return;
+    }
+    acceptedFiles.forEach((file) => {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => {
+        console.log("file reading has failed");
+      };
+      reader.onload = () => {
+        form.setValue("listingImage", [
+          ...form.getValues("listingImage"),
+          file,
+        ] as File[]);
+        setListingImgSrc((listingImgSrc) => [
+          ...listingImgSrc,
+          reader.result?.toString() as string,
+        ]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  const handelListingDelete = (index: number) => {
+    form.clearErrors("listingImage");
+    setListingImgSrc((listingImgSrc) => [
+      ...listingImgSrc.slice(0, index),
+      ...listingImgSrc.slice(index + 1),
+    ]);
+    form.setValue("listingImage", [
+      ...form.getValues("listingImage").slice(0, index),
+    ]);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handelClose}>
       <DialogContent className="flex w-full sm:max-w-4xl overflow-hidden flex-col gap-6 border-none px-6 py-9">
@@ -105,6 +166,52 @@ const ListingCardModal = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-5 gap-3">
+              {listingImgSrc.length < 5 && (
+                <FormField
+                  control={form.control}
+                  name="listingImage"
+                  render={({ field: { onChange, value, ...rest } }) => (
+                    <FormItem className="col-span-5">
+                      <FormControl>
+                        <>
+                          <AvatarDropzone onDrop={onListingDrop} />
+                          <Input
+                            disabled={isPending}
+                            type="file"
+                            className="hidden"
+                            {...rest}
+                          />
+                        </>
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+              <div className="flex flex-1 gap-2 col-span-5">
+                {listingImgSrc.map((src, index) => (
+                  <div
+                    key={index}
+                    className="relative group w-[170px] h-fit group"
+                  >
+                    <Image
+                      className="rounded-md overflow-x-auto "
+                      src={src}
+                      alt={`listingImg${index}`}
+                      key={index}
+                      width={0}
+                      height={0}
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                    <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black/70 rounded w-full h-auto opacity-0 group-hover:opacity-100 transition-opacity delay-100 duration-300">
+                      <Trash
+                        className="size-10 text-destructive cursor-pointer p-2 rounded bg-dark-1"
+                        onClick={() => handelListingDelete(index)}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
               <FormField
                 control={form.control}
                 name="propertyType"
