@@ -61,7 +61,6 @@ const ListingCardModal = ({
   const [allStates, setAllStates] = useState<State[]>([]);
   const [listingImgSrc, setListingImgSrc] = useState<string[]>([]);
   const { onKeyDown, onPaste, errorMessage } = useNumberInput();
-  const [active, setActive] = useState(0);
 
   type formSchema = z.infer<typeof ListingSchema>;
   const form = useForm({
@@ -95,6 +94,8 @@ const ListingCardModal = ({
   const handelClose = () => {
     form.reset();
     setError(undefined);
+    setListingImgSrc([]);
+    setAllStates(states);
     onClose();
   };
   const onListingDrop = (acceptedFiles: File[]) => {
