@@ -15,7 +15,7 @@ const ACCEPTED_IMAGE_TYPES = [
   ImageFormat.WEBP,
 ];
 export const ListingSchema = z.object({
-  listingImage: z
+  listingImages: z
     .array(
       z
         .instanceof(File, {

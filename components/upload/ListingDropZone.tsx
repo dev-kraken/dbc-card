@@ -30,8 +30,8 @@ export const ListingDropzone = ({ onDrop }: OnDropProps) => {
     noClick: true,
     noKeyboard: true,
     onDrop: onDrop,
-    maxFiles: 1,
-    multiple: false,
+    maxFiles: 5,
+    multiple: true,
   });
 
   const isFileTooLarge =
@@ -42,7 +42,7 @@ export const ListingDropzone = ({ onDrop }: OnDropProps) => {
       <div
         {...getRootProps()}
         className={cn(
-          "flex flex-col justify-center items-center p-5 border-2 border-dashed rounded-lg cursor-pointer",
+          "flex flex-col justify-center items-center p-3 border-2 border-dashed rounded-lg cursor-pointer",
           isDragActive
             ? "bg-purple-400/10 text-purple-600 animate-pulse"
             : "bg-purple-300/10 text-purple-400",
@@ -55,7 +55,7 @@ export const ListingDropzone = ({ onDrop }: OnDropProps) => {
               className="animate-in text-purple-600 w-full"
               size={35}
             />
-            <p className="text-md font-semibold p-0 m-0">DRAG FILE HERE</p>
+            <p className="text-sm font-semibold p-0 m-0">DRAG FILE HERE</p>
             <p className="text-xs text-muted-foreground p-0 m-0">
               Drag and drop a file here, or browse your computer.
             </p>

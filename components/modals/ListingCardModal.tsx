@@ -36,8 +36,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { State, states } from "@/constants/states";
 import useNumberInput from "@/hooks/useNumberInput";
-import { AvatarDropzone } from "@/components/upload/AvatarDropZone";
 import Image from "next/image";
+import { AddUpdateListing } from "@/action/CardListingAction";
+import { ListingDropzone } from "@/components/upload/ListingDropZone";
 
 interface ListingCardModalProps {
   isOpen: boolean;
@@ -63,10 +64,10 @@ const ListingCardModal = ({
   const { onKeyDown, onPaste, errorMessage } = useNumberInput();
 
   type formSchema = z.infer<typeof ListingSchema>;
-  const form = useForm({
+  const form = useForm<formSchema>({
     resolver: zodResolver(ListingSchema),
     defaultValues: {
-      listingImage: [new File([], "")],
+      listingImages: [] as File[],
       street: "",
       city: "",
       stateId: "",
@@ -85,9 +86,20 @@ const ListingCardModal = ({
   });
 
   const onSubmit = async (values: formSchema) => {
-    setError(undefined);
+    const listingData = new FormData();
+    Object.entries(values).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((val) => {
+          listingData.append(`${key}[]`, val);
+        });
+      } else {
+        listingData.append(key, value);
+      }
+    });
     startTransition(async () => {
-      console.log(values);
+      await AddUpdateListing(listingData).then((res) => {
+        console.log(res);
+      });
     });
   };
 
@@ -99,14 +111,16 @@ const ListingCardModal = ({
     onClose();
   };
   const onListingDrop = (acceptedFiles: File[]) => {
-    const imageField = form.getValues("listingImage");
-    const limitLength =
-      imageField.length === 0 ? 0 : imageField.length + acceptedFiles.length;
     if (acceptedFiles.length === 0) {
-      form.setError("listingImage", {
+      form.setError("listingImages", {
         message: "Please add at least 2 images.",
       });
+      return;
     }
+
+    const imageField = form.getValues("listingImages");
+    const limitLength =
+      imageField.length === 0 ? 0 : imageField.length + acceptedFiles.length;
 
     for (let i = 0; i < acceptedFiles.length; i++) {
       for (let j = 0; j < imageField.length; j++) {
@@ -119,7 +133,7 @@ const ListingCardModal = ({
     }
 
     if (acceptedFiles.length > 5 || limitLength > 5) {
-      form.setError("listingImage", { message: "Max image limit is 5." });
+      form.setError("listingImages", { message: "Max image limit is 5." });
       return;
     }
     acceptedFiles.forEach((file) => {
@@ -130,10 +144,7 @@ const ListingCardModal = ({
         console.log("file reading has failed");
       };
       reader.onload = () => {
-        form.setValue("listingImage", [
-          ...form.getValues("listingImage"),
-          file,
-        ] as File[]);
+        form.setValue("listingImages", [...imageField, file] as File[]);
         setListingImgSrc((listingImgSrc) => [
           ...listingImgSrc,
           reader.result?.toString() as string,
@@ -143,13 +154,13 @@ const ListingCardModal = ({
     });
   };
   const handelListingDelete = (index: number) => {
-    form.clearErrors("listingImage");
+    form.clearErrors("listingImages");
     setListingImgSrc((listingImgSrc) => [
       ...listingImgSrc.slice(0, index),
       ...listingImgSrc.slice(index + 1),
     ]);
-    form.setValue("listingImage", [
-      ...form.getValues("listingImage").slice(0, index),
+    form.setValue("listingImages", [
+      ...form.getValues("listingImages").slice(0, index),
     ]);
   };
 
@@ -170,12 +181,12 @@ const ListingCardModal = ({
               {listingImgSrc.length < 5 && (
                 <FormField
                   control={form.control}
-                  name="listingImage"
+                  name="listingImages"
                   render={({ field: { onChange, value, ...rest } }) => (
                     <FormItem className="col-span-5">
                       <FormControl>
                         <>
-                          <AvatarDropzone onDrop={onListingDrop} />
+                          <ListingDropzone onDrop={onListingDrop} />
                           <Input
                             disabled={isPending}
                             type="file"
