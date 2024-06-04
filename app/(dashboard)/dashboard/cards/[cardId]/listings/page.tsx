@@ -15,6 +15,7 @@ const ListingsPage = async ({ params }: { params: { cardId: string } }) => {
           mode="add"
           variant="outline"
           className="border-purple-1 text-purple-1 gap-1 flex items-center justify-center hover:bg-purple-1 hover:text-white"
+          cardId={params.cardId}
         >
           <CirclePlus className="size-4" />
           Add new listing
