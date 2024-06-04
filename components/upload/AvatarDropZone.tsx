@@ -10,7 +10,7 @@ interface OnDropProps {
   onDrop: (acceptedFiles: File[]) => void;
 }
 
-export const ListingDropzone = ({ onDrop }: OnDropProps) => {
+export const AvatarDropzone = ({ onDrop }: OnDropProps) => {
   const maxSize = 5 * 1024 * 1024;
 
   const {

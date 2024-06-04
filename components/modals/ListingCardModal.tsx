@@ -61,7 +61,7 @@ const ListingCardModal = ({
   const [error, setError] = useState<string | undefined>(undefined);
   const [allStates, setAllStates] = useState<State[]>([]);
   const [listingImgSrc, setListingImgSrc] = useState<string[]>([]);
-  const { onKeyDown, onPaste, errorMessage } = useNumberInput();
+  const { onKeyDown, onPaste } = useNumberInput();
 
   type formSchema = z.infer<typeof ListingSchema>;
   const form = useForm<formSchema>({
